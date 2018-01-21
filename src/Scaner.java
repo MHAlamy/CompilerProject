@@ -166,6 +166,8 @@ public class Scaner {
                     if (nextChar == '/') { // finish comment, start over ???
                         curRead = "";
                         state = 0;
+                    } else if (nextChar == '*') {
+                        state = 11;
                     } else {
                         state = 10; // continue comment
                     }
