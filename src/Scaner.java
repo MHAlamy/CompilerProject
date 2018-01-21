@@ -10,6 +10,7 @@ public class Scaner {
     private ArrayList<String> keywords = new ArrayList<String>();
 
     private int curInputIndex = 0;
+    private Token lastToken;
 
     public Scaner() {
         readFile();
@@ -41,6 +42,8 @@ public class Scaner {
 
             switch (state) {
                 case 0:
+                    boolean inpWasWrong = false;
+
                     if (nextChar == '-') {
                         state = 1;
                     } else if (nextChar == '+') {
@@ -50,6 +53,8 @@ public class Scaner {
                         state = 12;
                     } else if (nextChar == '=') {
                         state = 5;
+                    } else if (nextChar == '&') {
+                        state = 52;
                     } else if (Character.isDigit(nextChar)) {
                         state = 6;
                     } else if (Character.isLetter(nextChar)) {
@@ -57,12 +62,14 @@ public class Scaner {
                     } else if (nextChar == '/') {
                         state = 8;
                     } else if (Character.isWhitespace(nextChar)) {
+                        inpWasWrong = true;
                         state = 0;
                     } else {
-                        state = -1; // ERROR
+                        inpWasWrong = true;
+                        state = 0; // ERROR
                     }
 
-                    if (!Character.isWhitespace(nextChar)) {
+                    if (!inpWasWrong) {
                         curRead += nextChar;
                     }
                     curInputIndex++;
@@ -71,7 +78,17 @@ public class Scaner {
 
                 case 1:  // has read a -
                     if (Character.isDigit(nextChar)) {
-                        // TODO: 1/21/18
+                        String before = lastToken.getName();
+                        if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
+                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(")")) {
+                            // operator is unary, take the rest
+                            curRead += nextChar;
+                            curInputIndex++;
+                            state = 3;
+                        } else {
+                            // operator is binary, just use -
+                            state = 12;
+                        }
                     } else { // token is only -, don't read the rest
                         state = 12;
                     }
@@ -83,19 +100,41 @@ public class Scaner {
                         curInputIndex++;
                         state = 12;
                     } else if (Character.isDigit(nextChar)) {
-                        // TODO: 1/21/18
+                        String before = lastToken.getName();
+                        if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
+                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(")")) {
+                            // operator is unary, take the rest
+                            curRead += nextChar;
+                            curInputIndex++;
+                            state = 4;
+                        } else {
+                            // operator is binary, just use -
+                            state = 12;
+                        }
                     } else { // token is only +, don't read the rest
                         state = 12;
                     }
                     break;
 
 
-                case 3:  // after first -, a digit
-
+                case 3:  // after first -, an integer
+                    if (Character.isDigit(nextChar)) {
+                        curRead += nextChar;
+                        curInputIndex++;
+                        state = 3;
+                    } else {
+                        state = 12;
+                    }
                     break;
 
                 case 4: // after first +, a digit
-
+                    if (Character.isDigit(nextChar)) {
+                        curRead += nextChar;
+                        curInputIndex++;
+                        state = 4;
+                    } else {
+                        state = 12;
+                    }
                     break;
 
                 case 5: // has read a =
@@ -108,6 +147,16 @@ public class Scaner {
                     }
                     break;
 
+                case 52: // has read &
+                    if (nextChar == '&') {
+                        curRead += nextChar;
+                        state = 12;
+                    } else { // ignore last &
+                        curRead = "";
+                        state = 0;
+                    }
+//                    curInputIndex++;
+                    break;
                 case 6: // has read a digit
                     if (Character.isDigit(nextChar)) { // continue number
                         curRead += nextChar;
@@ -134,8 +183,9 @@ public class Scaner {
                         state = 10;
                     } else if (nextChar == '/') { // one line comment
                         state = 9;
-                    } else {
-                        state = 8;
+                    } else { // ignore last /
+                        curRead = "";
+                        state = 0;
                         //ERROR
                     }
                     curInputIndex++;
@@ -181,7 +231,7 @@ public class Scaner {
                 default: // error has occurred
                     curRead = "";
                     state = 0;
-                    // TODO: 1/21/18 error handling?
+                    System.out.println("SCANNER ERROR");
 
             }
 //            System.out.println("state = " + state + " cur pos = " + curInputIndex + " next char = " + nextChar +
@@ -199,6 +249,9 @@ public class Scaner {
             nextToken = new Token(curRead, 0);
             // TODO: 1/21/18 fix index in symbol table
         }
+
+
+        lastToken = nextToken;
 
         return nextToken;
     }

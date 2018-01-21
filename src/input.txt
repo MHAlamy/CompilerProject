@@ -2,9 +2,24 @@
 //int adfhj=10;
 /*b = c 				+ d + 		e;;*/
 
-	/*///***/int q;/*int a (salam) {
+	/*///***/		/*int a (salam) {
 		int b = c + jifjeif;;;
 	}***/
-salam=x;//// = y;
+	//if (a == b && c == d	) {{
+		//x += y + 2;
+
+
+
+	//}}
+	public static void main() {
+		int b;
+		b = 3+4+ -5;
+		c = 4-		+3;
+		if (c<+5- +3) {
+			d =-5;
+		}
+	}
+	//System.out.println();
+//		salam=x;//// = y;
 
 EOF

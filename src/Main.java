@@ -6,11 +6,11 @@ public class Main {
 
         do {
             tmp = scaner.getNextToken();
-            System.out.println(tmp);
+            System.out.println(tmp + " ");
             try {
-                Thread.sleep(50);
+//                Thread.sleep(50);
             } catch (Exception e) {
-                System.out.printf("salam");
+                System.out.printf("hi");
             }
         } while (!tmp.getName().equals("EOF"));
     }
