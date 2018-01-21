@@ -1,9 +1,9 @@
-salam;
-man ()()
-to;;;;; {
-	oo 
+//int a = 10;;;;;
+int adfhj=10;
+b = c + d + 		eiejfe;;
 
-
-	shomea***
-}
+	int a (salam) {
+		int b = c + jifjeif;;;
+	}
+x = y;
 EOF

@@ -1,29 +1,26 @@
 public class Token {
-    private String key;
-    private int val;
+    private String name;
+    private int attr;
 
-    public Token(String key, int val) {
-        this.key = key;
-        this.val = val;
+    public Token(String key, int attr) {
+        this.name = key;
+        this.attr = attr;
     }
 
     public Token(String key) {
-        this.key = key;
+        this.name = key;
     }
 
-    public String getKey() {
-        return key;
+    public String getName() {
+        return name;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public int getAttr() {
+        return attr;
     }
 
-    public int getVal() {
-        return val;
-    }
-
-    public void setVal(int val) {
-        this.val = val;
+    @Override
+    public String toString() {
+        return "<" + name + ", " + attr + ">";
     }
 }
