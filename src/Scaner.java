@@ -12,21 +12,25 @@ public class Scaner {
     private int curInputIndex = 0;
     private Token lastToken;
 
-    public Scaner() {
+    private SymbolTable curSymbolTable;
+
+    public void setCurSymbolTable(SymbolTable curSymbolTable) {
+        this.curSymbolTable = curSymbolTable;
+    }
+
+    public Scaner(SymbolTable st) {
+        curSymbolTable = st;
         readFile();
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
                 "extends", "return", ";", ",", "boolean", "int", "if", "else", "whiel", "for",
                 "System.out.println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==",
                 "identifier", "integer"));
-//        for (char c:
-//            input){
-//            System.out.print(c);
 //        }
     }
 
     public Token getNextToken() {
-        Token nextToken = new Token(""); // REMOVE
+        Token nextToken; // REMOVE
 
         int state = 0;
         String curRead = "";
@@ -247,6 +251,25 @@ public class Scaner {
         } else { // it's an identifier
 //            nextToken = new Token("identifier", 0);
             nextToken = new Token(curRead, 0);
+
+
+            SymbolTable tmpST = curSymbolTable;
+            boolean wasFound = false;
+            while (tmpST != null) {
+                if (tmpST.getIdIndex(curRead) != -1) { // was found
+                    wasFound = true;
+                    break;
+                } else {
+                    tmpST = tmpST.getContainer();
+                }
+            }
+            if (wasFound) {
+                // ???
+            } else { // add to curSymbolTable
+                int index = curSymbolTable.insertId(curRead);
+                // index???
+            }
+            // TODO: 1/22/18 how to return this ST's info?
             // TODO: 1/21/18 fix index in symbol table
         }
 
