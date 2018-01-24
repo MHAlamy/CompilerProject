@@ -5,11 +5,12 @@ import java.util.Arrays;
 
 public class Scaner {
     private ArrayList<Character> input = new ArrayList<Character>();
-    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/input.txt";
+    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/input.txt";
 
     private ArrayList<String> keywords = new ArrayList<String>();
 
     private int curInputIndex = 0;
+    private int curLine = 2; // for writing error message
     private Token lastToken;
 
     private SymbolTable curSymbolTable;
@@ -18,12 +19,20 @@ public class Scaner {
         this.curSymbolTable = curSymbolTable;
     }
 
+    public int getCurInputIndex() {
+        return curInputIndex;
+    }
+
+    public int getCurLine() {
+        return curLine;
+    }
+
     public Scaner(SymbolTable st) {
         curSymbolTable = st;
         readFile();
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
-                "extends", "return", ";", ",", "boolean", "int", "if", "else", "whiel", "for",
+                "extends", "return", ";", ",", "boolean", "int", "if", "else", "while", "for",
                 "System.out.println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==",
                 "identifier", "integer"));
 //        }
@@ -76,7 +85,10 @@ public class Scaner {
                     if (!inpWasWrong) {
                         curRead += nextChar;
                     }
+
                     curInputIndex++;
+                    if (nextChar == '\n')
+                        curLine++;
 
                     break;
 
@@ -84,11 +96,12 @@ public class Scaner {
                     if (Character.isDigit(nextChar)) {
                         String before = lastToken.getName();
                         if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
-                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(")")) {
+                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(",") ||
+                                before.equals("+=")) {
                             // operator is unary, take the rest
                             curRead += nextChar;
                             curInputIndex++;
-                            state = 3;
+
                         } else {
                             // operator is binary, just use -
                             state = 12;
@@ -106,7 +119,8 @@ public class Scaner {
                     } else if (Character.isDigit(nextChar)) {
                         String before = lastToken.getName();
                         if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
-                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(")")) {
+                                before.equals("*") || before.equals("<") || before.equals("(") || before.equals(",") ||
+                                before.equals("+=")) {
                             // operator is unary, take the rest
                             curRead += nextChar;
                             curInputIndex++;
@@ -193,6 +207,8 @@ public class Scaner {
                         //ERROR
                     }
                     curInputIndex++;
+                    if (nextChar == '\n')
+                        curLine++;
 
                     break;
 
@@ -204,6 +220,8 @@ public class Scaner {
                         state = 9;
                     }
                     curInputIndex++;
+                    if (nextChar == '\n')
+                        curLine++;
 
                     break;
 
@@ -214,6 +232,8 @@ public class Scaner {
                         state = 10;
                     }
                     curInputIndex++;
+                    if (nextChar == '\n')
+                        curLine++;
                     break;
 
                 case 11: // read a * in comment
@@ -226,6 +246,8 @@ public class Scaner {
                         state = 10; // continue comment
                     }
                     curInputIndex++;
+                    if (nextChar == '\n')
+                        curLine++;
 
                     break;
 
@@ -233,6 +255,7 @@ public class Scaner {
                     break loop;
 
                 default: // error has occurred
+                    // TODO: 1/24/18 error message
                     curRead = "";
                     state = 0;
                     System.out.println("SCANNER ERROR");
@@ -244,7 +267,9 @@ public class Scaner {
         }
 
         // check symbol table
-        if (keywords.contains(curRead)) {
+        if (curRead.equals("")) { // returns null if it reaches the end of input
+            nextToken = null;
+        } else if (keywords.contains(curRead)) {
             nextToken = new Token(curRead, -1);
         } else if (isStringNumber(curRead)) {
             nextToken = new Token("integer", Integer.parseInt(curRead));
@@ -253,7 +278,7 @@ public class Scaner {
             nextToken = new Token(curRead, 0);
 
 
-            SymbolTable tmpST = curSymbolTable;
+            /*SymbolTable tmpST = curSymbolTable;
             boolean wasFound = false;
             while (tmpST != null) {
                 if (tmpST.getIdIndex(curRead) != -1) { // was found
@@ -266,9 +291,9 @@ public class Scaner {
             if (wasFound) {
                 // ???
             } else { // add to curSymbolTable
-                int index = curSymbolTable.insertId(curRead);
+//                int index = curSymbolTable.insertId(curRead);
                 // index???
-            }
+            }*/
             // TODO: 1/22/18 how to return this ST's info?
             // TODO: 1/21/18 fix index in symbol table
         }
@@ -295,7 +320,8 @@ public class Scaner {
 
     private boolean isStringNumber(String read) {
         char[] arr = read.toCharArray();
-        if (arr[0] != '-' && arr[0] != '+' && !Character.isDigit(arr[0]))
+
+        if (arr.length == 0 || (arr[0] != '-' && arr[0] != '+' && !Character.isDigit(arr[0])))
             return false;
 
         for (int i = 1; i < arr.length; i++) {
