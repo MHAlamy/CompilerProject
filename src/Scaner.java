@@ -101,7 +101,7 @@ public class Scaner {
                             // operator is unary, take the rest
                             curRead += nextChar;
                             curInputIndex++;
-
+                            state = 3;
                         } else {
                             // operator is binary, just use -
                             state = 12;
