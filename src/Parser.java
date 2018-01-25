@@ -25,6 +25,7 @@ public class Parser {
     public Parser() {
         rules = new ArrayList<Rule>();
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
+        parseStack = new Stack<Term>();
 
         completeTerms();
         addRules();
@@ -45,11 +46,26 @@ public class Parser {
 
         while (!parseStack.peek().equals(new Terminal("$")) &&
                 nextToken != null) {
+
             Term top = parseStack.peek();
             tokenName = nextToken.getName();
 
-            if (top.getClass().equals(Symbol.class)) {
+            System.out.println("Parse Stack = " + parseStack);
+            System.out.println("Next Token = " + nextToken);
+            System.out.println("=====================================================================================");
+
+//            try {
+//                Thread.sleep(200);
+//            } catch (Exception e) {
+//                System.out.println(e.getMessage());
+//            }
+
+
+            if (top.getClass().equals(Symbol.class) || top.getClass().equals(Terminal.class) ||
+                    top.getClass().equals(Nonterminal.class)) { // stack top is not a action symbol
+
                 if (((Symbol)top).isTerminal()) { // check if two symbols are the same
+//                    System.out.println("is terminal");
                     if (tokenName.equals(((Symbol)top).getValue())) { // remove both
                         parseStack.pop();
                         nextToken = scaner.getNextToken();
@@ -64,6 +80,7 @@ public class Parser {
                     keyPair = new Pair<Symbol, Symbol>((Symbol)top, inputTerminal);
 
                     if (parseTable.containsKey(keyPair)) { // use production rule
+//                        System.out.println("can use a rule");
                         targetRule = parseTable.get(keyPair);
 
                         parseStack.pop();
@@ -73,6 +90,7 @@ public class Parser {
                         }
 
                     } else {
+                        System.out.println("error?");
                         int oldTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
                         while (nextToken != null &&  // while nextToken is not in follow set of top
                                 !((Nonterminal)top).getFollows().contains(new Symbol(nextToken.getName()))) {
@@ -236,7 +254,7 @@ public class Parser {
         rules.add(new Rule(ntRelExp, new ArrayList<Term>())); // 35
 
         rules.add(new Rule(ntRelTerm, new ArrayList<Term>(Arrays.asList(tDoubleEqual, ntExp)))); // 36
-        rules.add(new Rule(ntRelTerm, new ArrayList<Term>(Arrays.asList(tLess, ntExp)))); // 37 ???????
+        rules.add(new Rule(ntRelTerm, new ArrayList<Term>(Arrays.asList(tLess, ntExp)))); // 37 ?!?
 
         rules.add(new Rule(ntExp, new ArrayList<Term>(Arrays.asList(ntTerm, ntExp1)))); // 38
 
@@ -298,8 +316,9 @@ public class Parser {
         parseTable.put(new Pair<Term, Term>(ntGenExp, tTrue), rules.get(31));
 
         parseTable.put(new Pair<Term, Term>(ntExtension, tExtends), rules.get(6));
+        parseTable.put(new Pair<Term, Term>(ntExtension, tCurlyBraceOpen), rules.get(7)); // ?!?
 
-        parseTable.put(new Pair<Term, Term>(ntPrmt, tParanOpen), rules.get(20));
+        parseTable.put(new Pair<Term, Term>(ntPrmt, tParanClose), rules.get(20));
         parseTable.put(new Pair<Term, Term>(ntPrmt, tComma), rules.get(19));
 
         parseTable.put(new Pair<Term, Term>(ntStmt, tFor), rules.get(28));
@@ -337,6 +356,7 @@ public class Parser {
         parseTable.put(new Pair<Term, Term>(ntFieldDecs, tStatic), rules.get(8));
         parseTable.put(new Pair<Term, Term>(ntFieldDecs, tPublic), rules.get(9));
         parseTable.put(new Pair<Term, Term>(ntFieldDecs, tCurlyBraceClose), rules.get(9));
+        parseTable.put(new Pair<Term, Term>(ntFieldDecs, tClass), rules.get(9)); // ???
 
         parseTable.put(new Pair<Term, Term>(ntMethodDecs, tPublic), rules.get(14));
         parseTable.put(new Pair<Term, Term>(ntMethodDecs, tCurlyBraceClose), rules.get(15));
@@ -359,6 +379,8 @@ public class Parser {
         parseTable.put(new Pair<Term, Term>(ntVarDecs, tReturn), rules.get(12));
         parseTable.put(new Pair<Term, Term>(ntVarDecs, tCurlyBraceOpen), rules.get(12));
         parseTable.put(new Pair<Term, Term>(ntVarDecs, tCurlyBraceClose), rules.get(12));
+        parseTable.put(new Pair<Term, Term>(ntVarDecs, tPublic), rules.get(12));
+
 
         parseTable.put(new Pair<Term, Term>(ntClassDec, tClass), rules.get(5));
 
@@ -376,8 +398,12 @@ public class Parser {
 
         parseTable.put(new Pair<Term, Term>(ntGenExp1, tLess), rules.get(32));
         parseTable.put(new Pair<Term, Term>(ntGenExp1, tDoubleEqual), rules.get(32));
+        parseTable.put(new Pair<Term, Term>(ntGenExp1, tParanClose), rules.get(33)); // ??
+        parseTable.put(new Pair<Term, Term>(ntGenExp1, tComma), rules.get(33)); // ??
+        parseTable.put(new Pair<Term, Term>(ntGenExp1, tSemiColon), rules.get(33)); // ?!?
 
         parseTable.put(new Pair<Term, Term>(ntRelTerm, tDoubleEqual), rules.get(36));
+        parseTable.put(new Pair<Term, Term>(ntRelTerm, tLess), rules.get(37)); // ???
 
         parseTable.put(new Pair<Term, Term>(ntRelExp, tAnd), rules.get(34));
         parseTable.put(new Pair<Term, Term>(ntRelExp, tParanClose), rules.get(35));
@@ -426,6 +452,7 @@ public class Parser {
         parseTable.put(new Pair<Term, Term>(ntArgs, tTrue), rules.get(55));
 
     }
+
 }
 
 class Pair <F, S> {

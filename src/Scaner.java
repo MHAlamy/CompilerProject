@@ -33,7 +33,7 @@ public class Scaner {
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
                 "extends", "return", ";", ",", "boolean", "int", "if", "else", "while", "for",
-                "System.out.println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==",
+                "System", "out", "println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==", ".",
                 "identifier", "integer"));
 //        }
     }
@@ -275,7 +275,8 @@ public class Scaner {
             nextToken = new Token("integer", Integer.parseInt(curRead));
         } else { // it's an identifier
 //            nextToken = new Token("identifier", 0);
-            nextToken = new Token(curRead, 0);
+//            nextToken = new Token(curRead, 0);
+            nextToken = new Token("id", 0);
 
 
             /*SymbolTable tmpST = curSymbolTable;

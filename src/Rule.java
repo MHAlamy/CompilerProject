@@ -49,6 +49,11 @@ class Symbol extends Term{
     public int hashCode() {
         return value.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }
 
 class Terminal extends Symbol {
