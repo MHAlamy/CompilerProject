@@ -2,6 +2,10 @@
   <dictionary name="MohammadReza">
     <words>
       <w>nonterminal</w>
+      <w>paran</w>
+      <w>prmt</w>
+      <w>prmts</w>
+      <w>stmts</w>
     </words>
   </dictionary>
 </component>

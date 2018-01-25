@@ -44,6 +44,11 @@ class Symbol extends Term{
                 ((Symbol)obj).getValue().equals(this.getValue());
 
     }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
 }
 
 class Terminal extends Symbol {
