@@ -63,19 +63,29 @@ class Terminal extends Symbol {
 }
 
 class Nonterminal extends Symbol {
-    ArrayList<Symbol> follows;
+    private ArrayList<Symbol> follows;
+    private ArrayList<Symbol> firsts;
 
     public Nonterminal(String value) {
         super(value);
         follows = new ArrayList<Symbol>();
+        firsts = new ArrayList<Symbol>();
     }
 
     public void setFollows(ArrayList<Symbol> follows) {
         this.follows = follows;
     }
 
+    public void setFirsts(ArrayList<Symbol> firsts) {
+        this.firsts = firsts;
+    }
+
     public ArrayList<Symbol> getFollows() {
         return follows;
+    }
+
+    public ArrayList<Symbol> getFirsts() {
+        return firsts;
     }
 }
 

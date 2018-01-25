@@ -5,12 +5,12 @@ import java.util.Arrays;
 
 public class Scaner {
     private ArrayList<Character> input = new ArrayList<Character>();
-    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/input.txt";
+    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/parserPanic.txt";
 
     private ArrayList<String> keywords = new ArrayList<String>();
 
     private int curInputIndex = 0;
-    private int curLine = 2; // for writing error message
+    private int curLine = 1; // for writing error message
     private Token lastToken;
 
     private SymbolTable curSymbolTable;
@@ -33,7 +33,7 @@ public class Scaner {
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
                 "extends", "return", ";", ",", "boolean", "int", "if", "else", "while", "for",
-                "System", "out", "println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==", ".",
+                "System", "out", "println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==", ".", "<",
                 "identifier", "integer"));
 //        }
     }
@@ -61,9 +61,11 @@ public class Scaner {
                         state = 1;
                     } else if (nextChar == '+') {
                         state = 2;
-                    } else if (nextChar == '*' || nextChar == '.' || nextChar == '(' || nextChar == ')' ||
-                            nextChar == ';' || nextChar == '{' || nextChar == '}' || nextChar == '<') {
+                    } else if (nextChar == '*' || nextChar == '(' || nextChar == ')' || nextChar == ';' ||
+                            nextChar == '{' || nextChar == '}' || nextChar == '<' || nextChar == ',') {
                         state = 12;
+                    } else if (nextChar == '.') {
+                        state = 51;
                     } else if (nextChar == '=') {
                         state = 5;
                     } else if (nextChar == '&') {
@@ -77,9 +79,15 @@ public class Scaner {
                     } else if (Character.isWhitespace(nextChar)) {
                         inpWasWrong = true;
                         state = 0;
+                        if (lastToken != null && lastToken.getName().equals(".")) {
+                            System.out.println("Scanner error at line " + curLine + " and character " + curInputIndex + ": " +
+                                    "Your'e not allowed to type whitespaces after '.' token. Read whitespace will be ignored");
+                        }
                     } else {
                         inpWasWrong = true;
                         state = 0; // ERROR
+                        System.out.println("Scanner error at line " + curLine + " and character " + curInputIndex + ": " +
+                                "Read illegal character '" + nextChar + "'. It will be ignored");
                     }
 
                     if (!inpWasWrong) {
@@ -94,7 +102,8 @@ public class Scaner {
 
                 case 1:  // has read a -
                     if (Character.isDigit(nextChar)) {
-                        String before = lastToken.getName();
+                        String before = (lastToken == null) ? "" : lastToken.getName();
+
                         if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
                                 before.equals("*") || before.equals("<") || before.equals("(") || before.equals(",") ||
                                 before.equals("+=")) {
@@ -117,7 +126,7 @@ public class Scaner {
                         curInputIndex++;
                         state = 12;
                     } else if (Character.isDigit(nextChar)) {
-                        String before = lastToken.getName();
+                        String before = (lastToken == null) ? "" : lastToken.getName();
                         if (before.equals("=") || before.equals("==") || before.equals("-") || before.equals("+") ||
                                 before.equals("*") || before.equals("<") || before.equals("(") || before.equals(",") ||
                                 before.equals("+=")) {
@@ -155,6 +164,13 @@ public class Scaner {
                     }
                     break;
 
+                case 51: // has read a '.'. should just check last char for spaces and printing error message.
+                    if (curInputIndex > 0 && Character.isWhitespace(input.get(curInputIndex))) {
+                        System.out.println("Scanner error at line " + curLine + " and character " + curInputIndex + ": " +
+                                "Your'e not allowed to type whitespaces before '.' token. Read whitespaces were ignored");
+                    }
+                    state = 12;
+                    break;
                 case 5: // has read a =
                     if (nextChar == '=') { // read ==, == is the token
                         curRead += nextChar;
@@ -169,9 +185,12 @@ public class Scaner {
                     if (nextChar == '&') {
                         curRead += nextChar;
                         state = 12;
+                        curInputIndex++;
                     } else { // ignore last &
                         curRead = "";
                         state = 0;
+                        System.out.println("Scanner error at line " + curLine + " and character " + curInputIndex + ": " +
+                                "Expected &, but received '" + nextChar + "'. Ignoring read &.");
                     }
 //                    curInputIndex++;
                     break;
@@ -205,6 +224,8 @@ public class Scaner {
                         curRead = "";
                         state = 0;
                         //ERROR
+                        System.out.println("Scanner error at line " + curLine + " and character " + curInputIndex + ": " +
+                                "Expected * or / after /, but received '" + nextChar + "'. Ignoring read /.");
                     }
                     curInputIndex++;
                     if (nextChar == '\n')

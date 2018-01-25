@@ -75,7 +75,7 @@ public class Parser {
                         System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
                         tmpCII + ". Input was " + nextToken + ", but expected (and read) " + top + ".");
                     }
-                } else { // use a rule // TODO: 1/25/18 handle epsilon RHSs
+                } else { // use a rule
                     inputTerminal = new Terminal(nextToken.getName());
                     keyPair = new Pair<Symbol, Symbol>((Symbol)top, inputTerminal);
 
@@ -93,15 +93,25 @@ public class Parser {
                         System.out.println("error?");
                         int oldTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
                         while (nextToken != null &&  // while nextToken is not in follow set of top
-                                !((Nonterminal)top).getFollows().contains(new Symbol(nextToken.getName()))) {
+                                (!((Nonterminal)top).getFollows().contains(new Terminal(nextToken.getName()))) && // when token is in follow
+                                (!((Nonterminal)top).getFirsts().contains(new Terminal(nextToken.getName())))) { // when token is in first
                             nextToken = scaner.getNextToken();
                         }
                         if (nextToken != null) {
-                            parseStack.pop();
-                            int newTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
-                            System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
-                                    oldTmpCII + ". Couldn't match input with non-terminal " + top +
-                                    " .Dumped characters " + oldTmpCII + " until " + newTmpCII + " + non-terminal");
+                            if (((Nonterminal)top).getFollows().contains(new Terminal(nextToken.getName()))) {
+                                parseStack.pop();
+                                int newTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
+                                System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
+                                        oldTmpCII + ". Couldn't match input with non-terminal " + top +
+                                        " .Ignored characters " + oldTmpCII + " until " + newTmpCII + " + non-terminal");
+                            } else {
+                                int newTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
+                                System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
+                                        oldTmpCII + ". Couldn't match input with non-terminal " + top +
+                                        " .Ignored characters " + oldTmpCII + " until " + newTmpCII +
+                                        ". Continuing with " + nextToken);
+                            }
+
                         } else { // what should do ???
                             System.out.println("ERROR! COULDN'T FIX IT!");
                         }
@@ -185,6 +195,85 @@ public class Parser {
         ntFactor2 = new Nonterminal("Factor2");
         ntArg = new Nonterminal("Arg");
         ntArgs = new Nonterminal("Args");
+
+
+        // adding follows
+        // ntGoal?
+        ntSource.setFollows(new ArrayList<Symbol>(Arrays.asList(tEOF)));
+        ntClassDecs.setFollows(new ArrayList<Symbol>(Arrays.asList(tPublic)));
+        ntClassDec.setFollows(new ArrayList<Symbol>(Arrays.asList(tPublic, tClass)));
+        ntMainClass.setFollows(new ArrayList<Symbol>(Arrays.asList(tEOF)));
+        ntExtension.setFollows(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceOpen)));
+        ntVarDecs.setFollows(new ArrayList<Symbol>(Arrays.asList(tEOF, tCurlyBraceOpen, tIf, tWhile, tFor, tId,
+                tSystem, tCurlyBraceClose, tPublic, tReturn)));
+        ntStmts.setFollows(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceClose, tReturn)));
+        ntStmt.setFollows(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceClose, tReturn, tCurlyBraceOpen,
+                tIf, tWhile, tFor, tId, tSystem, tElse)));
+        ntFieldDecs.setFollows(new ArrayList<Symbol>(Arrays.asList(tPublic, tClass, tCurlyBraceClose)));
+        ntFieldDec.setFollows(new ArrayList<Symbol>(Arrays.asList(tPublic, tClass, tCurlyBraceClose, tStatic)));
+        ntMethodDecs.setFollows(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceClose)));
+        ntType.setFollows(new ArrayList<Symbol>(Arrays.asList(tId)));
+        ntVarDec.setFollows(new ArrayList<Symbol>(Arrays.asList(tEOF, tCurlyBraceOpen, tIf, tWhile, tFor, tId,
+                tSystem, tCurlyBraceClose, tBoolean, tInt, tPublic, tReturn)));
+        ntMethodDec.setFollows(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceClose, tPublic)));
+        ntPrmts.setFollows(new ArrayList<Symbol>(Arrays.asList(tParanClose)));
+        ntPrmt.setFollows(new ArrayList<Symbol>(Arrays.asList(tParanClose)));
+        ntGenExp.setFollows(new ArrayList<Symbol>(Arrays.asList(tSemiColon, tParanClose, tComma)));
+        ntGenExp1.setFollows(new ArrayList<Symbol>(Arrays.asList(tSemiColon, tParanClose, tComma)));
+        ntExp.setFollows(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tComma)));
+        ntExp1.setFollows(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tComma)));
+        ntExp2.setFollows(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntRelExp.setFollows(new ArrayList<Symbol>(Arrays.asList(tSemiColon, tParanClose, tComma)));
+        ntRelTerm.setFollows(new ArrayList<Symbol>(Arrays.asList(tSemiColon, tParanClose, tAnd, tComma)));
+        ntTerm.setFollows(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntTerm1.setFollows(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntFactor.setFollows(new ArrayList<Symbol>(Arrays.asList(tMult, tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntFactor1.setFollows(new ArrayList<Symbol>(Arrays.asList(tMult, tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntFactor2.setFollows(new ArrayList<Symbol>(Arrays.asList(tMult, tDoubleEqual, tLess, tSemiColon, tParanClose,
+                tAnd, tPlus, tMinus, tComma)));
+        ntArg.setFollows(new ArrayList<Symbol>(Arrays.asList(tParanClose)));
+        ntArgs.setFollows(new ArrayList<Symbol>(Arrays.asList(tParanClose)));
+
+
+        // adding firsts
+        ntGoal.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPublic, tEOF, tClass)));
+        ntSource.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPublic, tClass)));
+        ntClassDecs.setFirsts(new ArrayList<Symbol>(Arrays.asList(tClass)));
+        ntClassDec.setFirsts(new ArrayList<Symbol>(Arrays.asList(tClass)));
+        ntMainClass.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPublic)));
+        ntExtension.setFirsts(new ArrayList<Symbol>(Arrays.asList(tExtends)));
+        ntVarDecs.setFirsts(new ArrayList<Symbol>(Arrays.asList(tBoolean, tInt)));
+        ntStmts.setFirsts(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceOpen, tIf, tWhile, tFor, tId, tSystem)));
+        ntStmt.setFirsts(new ArrayList<Symbol>(Arrays.asList(tCurlyBraceOpen, tIf, tWhile, tFor, tId, tSystem)));
+        ntFieldDecs.setFirsts(new ArrayList<Symbol>(Arrays.asList(tStatic)));
+        ntFieldDec.setFirsts(new ArrayList<Symbol>(Arrays.asList(tStatic)));
+        ntMethodDecs.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPublic)));
+        ntType.setFirsts(new ArrayList<Symbol>(Arrays.asList(tBoolean, tInt)));
+        ntVarDec.setFirsts(new ArrayList<Symbol>(Arrays.asList(tBoolean, tInt)));
+        ntMethodDec.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPublic)));
+        ntPrmts.setFirsts(new ArrayList<Symbol>(Arrays.asList(tBoolean, tInt)));
+        ntPrmt.setFirsts(new ArrayList<Symbol>(Arrays.asList(tComma)));
+        ntGenExp.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen, tId, tTrue, tFalse, tInteger)));
+        ntGenExp1.setFirsts(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess)));
+        ntExp.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen, tId, tTrue, tFalse, tInteger)));
+        ntExp1.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPlus, tMinus)));
+        ntExp2.setFirsts(new ArrayList<Symbol>(Arrays.asList(tPlus, tMinus)));
+        ntRelExp.setFirsts(new ArrayList<Symbol>(Arrays.asList(tAnd)));
+        ntRelTerm.setFirsts(new ArrayList<Symbol>(Arrays.asList(tDoubleEqual, tLess)));
+        ntTerm.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen, tId, tTrue, tFalse, tInteger)));
+        ntTerm1.setFirsts(new ArrayList<Symbol>(Arrays.asList(tMult)));
+        ntFactor.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen, tId, tTrue, tFalse, tInteger)));
+        ntFactor1.setFirsts(new ArrayList<Symbol>(Arrays.asList(tDot)));
+        ntFactor2.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen)));
+        ntArg.setFirsts(new ArrayList<Symbol>(Arrays.asList(tComma)));
+        ntArgs.setFirsts(new ArrayList<Symbol>(Arrays.asList(tParanOpen, tId, tTrue, tFalse, tInteger)));
     }
 
     private void addRules() {
@@ -288,7 +377,7 @@ public class Parser {
         rules.add(new Rule(ntArg, new ArrayList<Term>())); // 58
     }
 
-    private void fillParseTable() { // TODO: 1/24/18 create parse table
+    private void fillParseTable() {
         parseTable.put(new Pair<Term, Term>(ntFieldDec, tStatic), rules.get(10));
 
         parseTable.put(new Pair<Term, Term>(ntTerm, tParanOpen), rules.get(43));
@@ -456,7 +545,6 @@ public class Parser {
 }
 
 class Pair <F, S> {
-    // TODO: 1/25/18 compatible with hash map? ????
     F first;
     S second;
 
