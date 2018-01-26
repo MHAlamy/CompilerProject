@@ -328,10 +328,10 @@ public class Scaner {
         Token res;
 
         if (stState.equals("classDef")) {
-            Index foundIndex = masterSymbolTable.getIdIndex(curRead);
+            Index foundIndex = masterSymbolTable.getRow(curRead);
 
             if (foundIndex == null) { // ok, add new class
-                foundIndex = masterSymbolTable.insertId(curRead);
+                foundIndex = masterSymbolTable.insertRow(curRead);
                 Row tmpSR = foundIndex.getRowPointer();
 
                 tmpSR.setType("class");
@@ -349,7 +349,7 @@ public class Scaner {
                 res = new Token("id", foundIndex);
             }
         } else if (stState.equals("extendsThis")) {
-            Index foundIndex = masterSymbolTable.getIdIndex(curRead);
+            Index foundIndex = masterSymbolTable.getRow(curRead);
 
             if (foundIndex == null) { // error
                 System.out.println("Extended class " + curRead + " does not exist!");
@@ -365,7 +365,7 @@ public class Scaner {
             boolean wasFound = false;
 
             while (tmpST != null) {
-                index = tmpST.getIdIndex(curRead);
+                index = tmpST.getRow(curRead);
 
                 if (index != null) { // was found
                     wasFound = true;
@@ -384,7 +384,7 @@ public class Scaner {
                         res = new Token("id", index);
                     } else { // declare in current symbol table
                         Index insertIndex;
-                        insertIndex = curSymbolTable.insertId(curRead);
+                        insertIndex = curSymbolTable.insertRow(curRead);
 
                         // details about symbolRow can be set later?
 
@@ -399,7 +399,7 @@ public class Scaner {
                     }
                 } else {
                     res = new Token("id", index);
-//                    System.out.println("ACCESSED " + curRead + ", inside " + index.getRowPointer().getSymbolTable().getName() + "\n");
+//                    System.out.println("ACCESSED " + curRead + ", inside " + index.getRowPointer().getContainer().getName() + "\n");
                 }
                 // if state is useID or variable was already defined:
 
@@ -407,7 +407,7 @@ public class Scaner {
             } else { // add to curSymbolTable
                 if (stState.equals("normalDef")) {
                     Index insertIndex;
-                    insertIndex = curSymbolTable.insertId(curRead);
+                    insertIndex = curSymbolTable.insertRow(curRead);
 
                     // details about symbolRow can be set later?
 
@@ -418,7 +418,7 @@ public class Scaner {
                     res = new Token("id", null);
                 }
 
-//                index = curSymbolTable.insertId(curRead);
+//                index = curSymbolTable.insertRow(curRead);
 //                return new Token("id", index);
             }
         }

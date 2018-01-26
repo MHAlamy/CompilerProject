@@ -1,48 +1,19 @@
 import java.util.ArrayList;
 
 public abstract class SymbolTable {
-//    private SymbolTable container;
+
     private String name;
-//    private boolean isClass;
-
-//    ArrayList<Row> rows;
-
-//    public SymbolTable(SymbolTable container) {
-//        this.container = container;
-//        rows = new ArrayList<Row>();
-//    }
-
-//    public SymbolTable(boolean isClass) {
-//        container = null;
-//        this.isClass = isClass;
-//        rows = new ArrayList<Row>();
-//    }
 
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public abstract Row getIdIndex(String inputId); // returns -1 if id is not already defined
-//        Index res;
-//        int rowNum = rows.indexOf(new Row(this, inputId));
-//
-//        if (rowNum >= 0) {
-//            res = new Index(rows.get(rowNum));
-//        } else {
-//            res = null; // was not found
-//        }
-//
-//        return res;
-//    }
+    public abstract Row getRow(String name) throws Exception;
 
-    public abstract Row insertId(String inputId);// { // returns added id's index
-//        rows.add(new Row(this, inputId));
-//        return new Index(rows.get(rows.size() - 1)); // insertId is added at the end of list
-//    }
+    public abstract Row insertRow(String name);
 
     @Override
     public boolean equals(Object obj) {
@@ -66,14 +37,16 @@ public abstract class SymbolTable {
 //    }
 }
 
-
-
 class ClassSymbolTable extends SymbolTable {
+
+    private MasterSymbolTable masterSymbolTable;
     private ClassSymbolTable parentClass;
     private ArrayList<NonClassRow> nonClassRows;
 
-    public ClassSymbolTable() {
-        nonClassRows = new ArrayList<NonClassRow>();
+    public ClassSymbolTable(MasterSymbolTable masterSymbolTable) {
+        this.masterSymbolTable = masterSymbolTable;
+        parentClass = null;
+        nonClassRows = new ArrayList<>();
     }
 
     public void setParentClass(ClassSymbolTable parentClass) {
@@ -88,10 +61,10 @@ class ClassSymbolTable extends SymbolTable {
     }
 
     @Override
-    public Row getIdIndex(String inputId) {
+    public Row getRow(String name) {
         Row res;
 
-        int rowNum = nonClassRows.indexOf(new NonClassRow(this, inputId));
+        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
 
         if (rowNum >= 0) {
             res = nonClassRows.get(rowNum);
@@ -103,7 +76,7 @@ class ClassSymbolTable extends SymbolTable {
     }
 
     @Override
-    public Row insertId(String inputId) {
+    public Row insertRow(String name) {
         return null;
     }
 }
@@ -111,13 +84,13 @@ class ClassSymbolTable extends SymbolTable {
 
 
 class MethodSymbolTable extends SymbolTable {
+
     private ClassSymbolTable containerClass;
     private ArrayList<VarRow> varRows;
 
     public MethodSymbolTable(ClassSymbolTable containerClass) {
         this.containerClass = containerClass;
-
-        varRows = new ArrayList<VarRow>();
+        varRows = new ArrayList<>();
     }
 
     public ClassSymbolTable getContainerClass() {
@@ -129,41 +102,65 @@ class MethodSymbolTable extends SymbolTable {
     }
 
     @Override
-    public Row getIdIndex(String inputId) {
-        return null;
+    public Row getRow(String name) throws Exception{
+        VarRow res = null;
+        for (VarRow varRow : varRows)
+            if (varRow.getName().equals(name)) {
+                res = varRow;
+                break;
+            }
+        if (res == null)
+            throw new Exception("Not Found");
+        return res;
     }
 
     @Override
-    public Row insertId(String inputId) {
-        return null;
+    public Row insertRow(String name) {
+        VarRow temp = new VarRow(this, name)
     }
 }
 
 
 
 class MasterSymbolTable extends SymbolTable {
+
     private ArrayList<ClassRow> classRows;
+
+    public MasterSymbolTable() {
+        classRows = new ArrayList<>();
+    }
 
     public ArrayList<ClassRow> getClassRows() {
         return classRows;
     }
 
-
     @Override
-    public Row getIdIndex(String inputId) {
-        return null;
+    public ClassRow getRow(String name) throws Exception {
+        ClassRow res = null;
+        for (ClassRow row : classRows) {
+            if (row.getName().equals(name)) {
+                res = row;
+                break;
+            }
+        }
+        if (res == null)
+            throw new Exception("Not found");
+        return res;
     }
 
     @Override
-    public Row insertId(String inputId) {
-        return null;
+    public Row insertRow(String name) {
+        ClassSymbolTable classSymbolTable = new ClassSymbolTable(this);
+        ClassRow temp = new ClassRow(this, name, classSymbolTable);
+        classRows.add(temp);
+        return temp;
     }
 }
 
 
 
 abstract class Row {
-    private SymbolTable symbolTable;
+    private SymbolTable container;
     private String name;
 
 //    private SymbolTable target; // only if is class or func;
@@ -171,8 +168,8 @@ abstract class Row {
 //    private ArrayList<String> attributes; // ???
 
 
-    public Row(SymbolTable symbolTable, String name) {
-        this.symbolTable = symbolTable;
+    public Row(SymbolTable container, String name) {
+        this.container = container;
         this.name = name;
 //        attributes = new ArrayList<String>();
     }
@@ -193,8 +190,8 @@ abstract class Row {
 //        this.target = target;
 //    }
 
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
+    public SymbolTable getContainer() {
+        return container;
     }
 
     @Override
@@ -205,9 +202,9 @@ abstract class Row {
 
 //    @Override
 //    public String toString() {
-////        return ("ID " + name + " in : " + symbolTable);
+////        return ("ID " + name + " in : " + container);
 //        String res = "";
-//        res += "Row: " + getName() + ", and is " + getType() + ". is in table : " + symbolTable.getName() + "\n";
+//        res += "Row: " + getName() + ", and is " + getType() + ". is in table : " + container.getName() + "\n";
 //        if (target != null) {
 //            res += "\t" + target.toString().replaceAll("\\n", "\n\t");
 //        }
@@ -220,8 +217,8 @@ abstract class Row {
 class ClassRow extends Row {
     private ClassSymbolTable classSymbolTable;
 
-    public ClassRow(SymbolTable symbolTable, String name, ClassSymbolTable classSymbolTable) {
-        super(symbolTable, name);
+    public ClassRow(SymbolTable container, String name, ClassSymbolTable classSymbolTable) {
+        super(container, name);
         this.classSymbolTable = classSymbolTable;
     }
 }
@@ -230,8 +227,8 @@ class NonClassRow extends Row {
     private Type type;
     private int address;
 
-    public NonClassRow(SymbolTable symbolTable, String name) {
-        super(symbolTable, name);
+    public NonClassRow(SymbolTable container, String name, Type type) {
+        super(container, name);
         this.type = type;
     }
 
@@ -247,15 +244,15 @@ class NonClassRow extends Row {
 class MethodRow extends NonClassRow {
     private MethodSymbolTable methodSymbolTable;
 
-    public MethodRow(SymbolTable symbolTable, String name, Type type, MethodSymbolTable methodSymbolTable) {
-        super(symbolTable, name, type);
+    public MethodRow(SymbolTable container, String name, Type type, MethodSymbolTable methodSymbolTable) {
+        super(container, name, type);
         this.methodSymbolTable = methodSymbolTable;
     }
 }
 
 class VarRow extends NonClassRow {
-    public VarRow(SymbolTable symbolTable, String name, Type type) {
-        super(symbolTable, name, type);
+    public VarRow(SymbolTable container, String name, Type type) {
+        super(container, name, type);
     }
 }
 

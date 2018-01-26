@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Stack;
 
 public class Parser {
-    private Stack<Term> parseStack;
-    private Token curToken;
+
     private ArrayList<Rule> rules;
-
     private HashMap<Pair<Term, Term>, Rule> parseTable;
-
-    SymbolTable masterSymbolTable;
+    private Stack<Term> parseStack;
+    private SymbolTable masterSymbolTable;
 
     private Scaner scaner; // ???
+
+    private Token curToken;
 
     private Terminal tEOF, tPublic, tClass, tId, tStatic, tVoid, tMain, tExtends, tReturn, tBoolean, tInt,
         tIf, tElse, tWhile, tFor, tInteger, tTrue, tFalse, tSystem, tOut, tPrintln,
@@ -25,11 +25,10 @@ public class Parser {
 
 
     public Parser() {
-        rules = new ArrayList<Rule>();
-        parseTable = new HashMap<Pair<Term, Term>, Rule>();
-        parseStack = new Stack<Term>();
+        rules = new ArrayList<>();
+        parseTable = new HashMap<>();
+        parseStack = new Stack<>();
         masterSymbolTable = new SymbolTable(null);
-
 
         completeTerms();
         addRules();
