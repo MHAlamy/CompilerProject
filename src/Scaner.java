@@ -300,10 +300,10 @@ public class Scaner {
         // check symbol table
         if (curRead.equals("")) { // returns null if it reaches the end of input
             nextToken = null;
-        } else if (keywords.contains(curRead)) {
-            nextToken = new Token(curRead, null);
         } else if (isStringNumber(curRead)) {
             nextToken = new Token("integer", new Index(Integer.parseInt(curRead)));
+        } else if (keywords.contains(curRead)) {
+            nextToken = new Token(curRead, null);
         } else { // it's an identifier
 //            nextToken = new Token("identifier", 0);
 //            nextToken = new Token(curRead, 0);
@@ -332,7 +332,7 @@ public class Scaner {
 
             if (foundIndex == null) { // ok, add new class
                 foundIndex = masterSymbolTable.insertId(curRead);
-                SymbolRow tmpSR = foundIndex.getRowPointer();
+                Row tmpSR = foundIndex.getRowPointer();
 
                 tmpSR.setType("class");
                 tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward
@@ -388,7 +388,7 @@ public class Scaner {
 
                         // details about symbolRow can be set later?
 
-//                        SymbolRow tmpSR = foundIndex.getRowPointer();
+//                        Row tmpSR = foundIndex.getRowPointer();
 
 //                        tmpSR.setType("class");
 //                        tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward

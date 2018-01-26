@@ -26,33 +26,52 @@ public class Token {
 }
 
 class Index {
-    private boolean isInt;
-    private int value; // only if isInt
-    private SymbolRow rowPointer; // otherwise, if is ID
+//    private boolean isInt;
+//    private int value; // only if isInt
+//    private Row rowPointer; // otherwise, if is ID
 
-    public Index(int value) {
-        isInt = true;
+//    public Index(int value) {
+//        isInt = true;
+//        this.value = value;
+//    }
+//
+//    public Index(Row rowPointer) {
+//        isInt = false;
+//        this.rowPointer = rowPointer;
+//    }
+    public Index() {
+
+    }
+//    public void setRowPointer(Row rowPointer) {
+//        this.rowPointer = rowPointer;
+//    }
+//
+//    public boolean isInt() {
+//        return isInt;
+//    }
+//
+//    public int getValue() {
+//        return value;
+//    }
+//
+//    public Row getRowPointer() {
+//        return rowPointer;
+//    }
+}
+
+class ValueIndex extends Index {
+    private int value;
+
+    public ValueIndex(int value) {
         this.value = value;
-    }
 
-    public Index(SymbolRow rowPointer) {
-        isInt = false;
-        this.rowPointer = rowPointer;
     }
+}
 
-    public void setRowPointer(SymbolRow rowPointer) {
-        this.rowPointer = rowPointer;
-    }
+class RowIndex extends Index {
+    private Row row;
 
-    public boolean isInt() {
-        return isInt;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public SymbolRow getRowPointer() {
-        return rowPointer;
+    public RowIndex(Row row) {
+        this.row = row;
     }
 }
