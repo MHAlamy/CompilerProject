@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Scaner {
     private ArrayList<Character> input = new ArrayList<Character>();
-    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/parserPanic.txt";
+    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/SybolTableTest.txt";
 
     private ArrayList<String> keywords = new ArrayList<String>();
 
@@ -13,7 +13,7 @@ public class Scaner {
     private int curLine = 1; // for writing error message
     private Token lastToken;
 
-    private String stState; // classDef, normalDef, useId
+    private String stState; // classDef, extendsThis, normalDef, useId,
 
     private SymbolTable masterSymbolTable;
     private SymbolTable curSymbolTable;
@@ -36,6 +36,7 @@ public class Scaner {
 
     public Scaner(SymbolTable st) {
         this.masterSymbolTable = st;
+        masterSymbolTable.setName("Master Table");
         curSymbolTable = st;
 
         stState = "";
@@ -320,29 +321,49 @@ public class Scaner {
     }
 
     private Token fixIdToken(String curRead) {
+//        System.out.println("Adding ID " + curRead + ". state is : " + stState + "\n");
+
         SymbolTable tmpST = curSymbolTable;
         Index index = null;
+        Token res;
 
         if (stState.equals("classDef")) {
             Index foundIndex = masterSymbolTable.getIdIndex(curRead);
+
             if (foundIndex == null) { // ok, add new class
                 foundIndex = masterSymbolTable.insertId(curRead);
                 SymbolRow tmpSR = foundIndex.getRowPointer();
 
                 tmpSR.setType("class");
                 tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward
+//                tmpSR.getTarget().set;
                 tmpSR.getTarget().setClass(true);
+                tmpSR.getTarget().setName(curRead);
                 setCurSymbolTable(tmpSR.getTarget());
 
-                return new Token("id", foundIndex);
+                res = new Token("id", foundIndex);
                 // TODO: 1/26/18 change table???
             } else { // error, return found class??
                 System.out.println("Error at line " + curLine + ". Class " + curRead +
                         " was already defined. this input will be counted as old class'");
-                return new Token("id", foundIndex);
+                res = new Token("id", foundIndex);
             }
+        } else if (stState.equals("extendsThis")) {
+            Index foundIndex = masterSymbolTable.getIdIndex(curRead);
+
+            if (foundIndex == null) { // error
+                System.out.println("Extended class " + curRead + " does not exist!");
+                res = null;
+//                return new Token("id", foundIndex);
+            } else { // return old defined class, set container of last one
+                curSymbolTable.setContainer(foundIndex.getRowPointer().getTarget());
+
+                res = new Token("id", foundIndex);
+            }
+
         } else {
             boolean wasFound = false;
+
             while (tmpST != null) {
                 index = tmpST.getIdIndex(curRead);
 
@@ -353,28 +374,60 @@ public class Scaner {
                     tmpST = tmpST.getContainer();
                 }
             }
+
             if (wasFound) {
-                if (stState.equals("classDef")) {
+                if (stState.equals("normalDef")) {
+                    if (tmpST.equals(curSymbolTable)) {
+                        System.out.println("Variable/Function " + curRead + " is already in this scope." +
+                                " this declaration will be ignored");
+                        // TODO: 1/26/18 what to do if ID is for function?
+                        res = new Token("id", index);
+                    } else { // declare in current symbol table
+                        Index insertIndex;
+                        insertIndex = curSymbolTable.insertId(curRead);
 
-                } else if (stState.equals("normalDef")) {
+                        // details about symbolRow can be set later?
 
-                } else { // useID
+//                        SymbolRow tmpSR = foundIndex.getRowPointer();
 
+//                        tmpSR.setType("class");
+//                        tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward
+//                        tmpSR.getTarget().setClass(true);
+//                        setCurSymbolTable(tmpSR.getTarget());
+
+                        res =  new Token("id", insertIndex);
+                    }
+                } else {
+                    res = new Token("id", index);
+//                    System.out.println("ACCESSED " + curRead + ", inside " + index.getRowPointer().getSymbolTable().getName() + "\n");
                 }
-                return new Token("id", index);
+                // if state is useID or variable was already defined:
+
+
             } else { // add to curSymbolTable
-                if (stState.equals("classDef")) {
+                if (stState.equals("normalDef")) {
+                    Index insertIndex;
+                    insertIndex = curSymbolTable.insertId(curRead);
 
-                } else if (stState.equals("normalDef")) {
+                    // details about symbolRow can be set later?
 
+                    res = new Token("id", insertIndex);
                 } else { // useID
-
+                    System.out.println("Variable/Function " + curRead + " is not defined in this scope");
+                    // TODO: 1/26/18 error handling??
+                    res = new Token("id", null);
                 }
 
-                index = curSymbolTable.insertId(curRead);
-                return new Token("id", index);
+//                index = curSymbolTable.insertId(curRead);
+//                return new Token("id", index);
             }
         }
+
+        stState = "";
+
+//        System.out.println("Symbol Table Result: ");
+//        System.out.println(masterSymbolTable + "\n\n");
+        return res;
 
     }
 

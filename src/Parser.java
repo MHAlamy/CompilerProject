@@ -55,6 +55,17 @@ public class Parser {
             Term top = parseStack.peek();
             tokenName = nextToken.getName();
 
+            if (tokenName.equals("class")) {
+                scaner.setSTState("classDef");
+            }
+            else if (tokenName.equals("extends"))
+                scaner.setSTState("extendsThis");
+            if (tokenName.equals("boolean") || tokenName.equals("int"))
+                scaner.setSTState("normalDef");
+//            else
+//                scaner.setSTState("useID");
+
+
             System.out.println("Parse Stack = " + parseStack);
             System.out.println("Next Token = " + nextToken);
             System.out.println("=====================================================================================");
@@ -77,7 +88,7 @@ public class Parser {
                     } else {
                         parseStack.pop();
                         int tmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
-                        System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
+                        System.out.println("Parser Error at line " + scaner.getCurLine() + " and character " +
                         tmpCII + ". Input was " + nextToken + ", but expected (and read) " + top + ".");
                     }
                 } else { // use a rule
@@ -106,12 +117,12 @@ public class Parser {
                             if (((Nonterminal)top).getFollows().contains(new Terminal(nextToken.getName()))) {
                                 parseStack.pop();
                                 int newTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
-                                System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
+                                System.out.println("Parser Error at line " + scaner.getCurLine() + " and character " +
                                         oldTmpCII + ". Couldn't match input with non-terminal " + top +
                                         " .Ignored characters " + oldTmpCII + " until " + newTmpCII + " + non-terminal");
                             } else {
                                 int newTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
-                                System.out.println("Parsing Error at line " + scaner.getCurLine() + " and character " +
+                                System.out.println("Parser Error at line " + scaner.getCurLine() + " and character " +
                                         oldTmpCII + ". Couldn't match input with non-terminal " + top +
                                         " .Ignored characters " + oldTmpCII + " until " + newTmpCII +
                                         ". Continuing with " + nextToken);
@@ -399,7 +410,7 @@ public class Parser {
 
         parseTable.put(new Pair<Term, Term>(ntMethodDec, tPublic), rules.get(16));
 
-        parseTable.put(new Pair<Term, Term>(ntPrmts, tParanOpen), rules.get(18));
+        parseTable.put(new Pair<Term, Term>(ntPrmts, tParanClose), rules.get(18));
         parseTable.put(new Pair<Term, Term>(ntPrmts, tBoolean), rules.get(17));
         parseTable.put(new Pair<Term, Term>(ntPrmts, tInt), rules.get(17));
 

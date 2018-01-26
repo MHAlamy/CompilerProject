@@ -21,8 +21,16 @@ public class SymbolTable {
         return container;
     }
 
+    public void setContainer(SymbolTable container) {
+        this.container = container;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isClass() {
@@ -62,7 +70,14 @@ public class SymbolTable {
 
     @Override
     public String toString() {
-        return ("Symbol table : " + name);
+        String res = "";
+        res += ("Symbol table : " + name + ". Container is = " +
+                ((container == null) ? ("NULL") : (container.getName())) + "\n-----------------------------------------------\n");
+        for (SymbolRow symbolRow:
+             symbolRows) {
+            res += symbolRow;
+        }
+        return res;
     }
 }
 
@@ -107,6 +122,10 @@ class SymbolRow {
         this.target = target;
     }
 
+    public SymbolTable getSymbolTable() {
+        return symbolTable;
+    }
+
     @Override
     public boolean equals(Object obj) { // CONSIDERS ONLY NAME
         return (obj.getClass().equals(this.getClass())) &&
@@ -115,6 +134,14 @@ class SymbolRow {
 
     @Override
     public String toString() {
-        return ("ID " + idName + " in : " + symbolTable);
+//        return ("ID " + idName + " in : " + symbolTable);
+        String res = "";
+        res += "Row: " + getIdName() + ", and is " + getType() + ". is in table : " + symbolTable.getName() + "\n";
+        if (target != null) {
+            res += "\t" + target.toString().replaceAll("\\n", "\n\t");
+        }
+        res += "\n";
+
+        return res;
     }
 }
