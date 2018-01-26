@@ -8,7 +8,7 @@ public class Parser {
     private ArrayList<Rule> rules;
     private HashMap<Pair<Term, Term>, Rule> parseTable;
     private Stack<Term> parseStack;
-    private SymbolTable masterSymbolTable;
+    private MasterSymbolTable masterSymbolTable;
 
     private Scaner scaner; // ???
 
@@ -25,10 +25,10 @@ public class Parser {
 
 
     public Parser() {
-        rules = new ArrayList<>();
-        parseTable = new HashMap<>();
-        parseStack = new Stack<>();
-        masterSymbolTable = new SymbolTable(null);
+        rules = new ArrayList<Rule>();
+        parseTable = new HashMap<Pair<Term, Term>, Rule>();
+        parseStack = new Stack<Term>();
+        masterSymbolTable = new MasterSymbolTable();
 
         completeTerms();
         addRules();

@@ -15,7 +15,7 @@ public class Scaner {
 
     private String stState; // classDef, extendsThis, normalDef, useId,
 
-    private SymbolTable masterSymbolTable;
+    private MasterSymbolTable masterSymbolTable;
     private SymbolTable curSymbolTable;
 
     public void setSTState(String STState) {
@@ -34,7 +34,7 @@ public class Scaner {
         return curLine;
     }
 
-    public Scaner(SymbolTable st) {
+    public Scaner(MasterSymbolTable st) {
         this.masterSymbolTable = st;
         masterSymbolTable.setName("Master Table");
         curSymbolTable = st;
@@ -301,7 +301,7 @@ public class Scaner {
         if (curRead.equals("")) { // returns null if it reaches the end of input
             nextToken = null;
         } else if (isStringNumber(curRead)) {
-            nextToken = new Token("integer", new Index(Integer.parseInt(curRead)));
+            nextToken = new Token("integer", new ValueIndex(Integer.parseInt(curRead)));
         } else if (keywords.contains(curRead)) {
             nextToken = new Token(curRead, null);
         } else { // it's an identifier
@@ -328,50 +328,57 @@ public class Scaner {
         Token res;
 
         if (stState.equals("classDef")) {
-            Index foundIndex = masterSymbolTable.getRow(curRead);
+            ClassRow foundRow = masterSymbolTable.getRow(curRead);
 
-            if (foundIndex == null) { // ok, add new class
-                foundIndex = masterSymbolTable.insertRow(curRead);
-                Row tmpSR = foundIndex.getRowPointer();
+            if (foundRow == null) { // ok, add new class
+                foundRow = masterSymbolTable.insertRow(curRead);
 
-                tmpSR.setType("class");
-                tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward
-//                tmpSR.getTarget().set;
-                tmpSR.getTarget().setClass(true);
-                tmpSR.getTarget().setName(curRead);
-                setCurSymbolTable(tmpSR.getTarget());
+//                tmpClassRow.getTarget().setName(curRead); // DOES NEED NAME?
+                setCurSymbolTable(foundRow.getClassSymbolTable());
 
-                res = new Token("id", foundIndex);
+                res = new Token("id", new RowIndex(foundRow));
                 // TODO: 1/26/18 change table???
             } else { // error, return found class??
                 System.out.println("Error at line " + curLine + ". Class " + curRead +
                         " was already defined. this input will be counted as old class'");
-                res = new Token("id", foundIndex);
+                res = new Token("id", new RowIndex(foundRow));
             }
         } else if (stState.equals("extendsThis")) {
-            Index foundIndex = masterSymbolTable.getRow(curRead);
+            ClassRow foundRow = masterSymbolTable.getRow(curRead);
 
-            if (foundIndex == null) { // error
+            if (foundRow == null) { // error
                 System.out.println("Extended class " + curRead + " does not exist!");
                 res = null;
-//                return new Token("id", foundIndex);
+//                return new Token("id", foundRow);
             } else { // return old defined class, set container of last one
-                curSymbolTable.setContainer(foundIndex.getRowPointer().getTarget());
+                if (curSymbolTable.getClass().equals(ClassSymbolTable.class))
+                    ((ClassSymbolTable)curSymbolTable).setParentClass(foundRow.getClassSymbolTable());
 
-                res = new Token("id", foundIndex);
+                res = new Token("id", new RowIndex(foundRow));
             }
 
         } else {
             boolean wasFound = false;
 
-            while (tmpST != null) {
-                index = tmpST.getRow(curRead);
+            Row foundRow = null;
 
-                if (index != null) { // was found
+            while (tmpST != null) {
+                foundRow = tmpST.getRow(curRead);
+//                index = tmpST.getRow(curRead);
+
+                if (foundRow != null) { // was found
                     wasFound = true;
                     break;
                 } else {
-                    tmpST = tmpST.getContainer();
+                    try {
+                        if (tmpST.getClass().equals(MethodSymbolTable.class)) {
+                            tmpST = ((MethodSymbolTable) tmpST).getContainerClass();
+                        } else { // it's class symbol table
+                            tmpST = ((ClassSymbolTable) tmpST).getParentClass();
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
 
@@ -381,10 +388,13 @@ public class Scaner {
                         System.out.println("Variable/Function " + curRead + " is already in this scope." +
                                 " this declaration will be ignored");
                         // TODO: 1/26/18 what to do if ID is for function?
-                        res = new Token("id", index);
+
+                        res = new Token("id", new RowIndex(foundRow));
+
                     } else { // declare in current symbol table
                         Index insertIndex;
-                        insertIndex = curSymbolTable.insertRow(curRead);
+                        Row insertRow = curSymbolTable.insertRow(curRead);
+                        insertRow = curSymbolTable.insertRow(curRead);
 
                         // details about symbolRow can be set later?
 
@@ -395,10 +405,10 @@ public class Scaner {
 //                        tmpSR.getTarget().setClass(true);
 //                        setCurSymbolTable(tmpSR.getTarget());
 
-                        res =  new Token("id", insertIndex);
+                        res =  new Token("id", new RowIndex(insertRow));
                     }
                 } else {
-                    res = new Token("id", index);
+                    res = new Token("id", new RowIndex(foundRow));
 //                    System.out.println("ACCESSED " + curRead + ", inside " + index.getRowPointer().getContainer().getName() + "\n");
                 }
                 // if state is useID or variable was already defined:
@@ -407,11 +417,12 @@ public class Scaner {
             } else { // add to curSymbolTable
                 if (stState.equals("normalDef")) {
                     Index insertIndex;
-                    insertIndex = curSymbolTable.insertRow(curRead);
+                    Row insertRow;
+                    insertRow = curSymbolTable.insertRow(curRead);
 
                     // details about symbolRow can be set later?
 
-                    res = new Token("id", insertIndex);
+                    res = new Token("id", new RowIndex(insertRow));
                 } else { // useID
                     System.out.println("Variable/Function " + curRead + " is not defined in this scope");
                     // TODO: 1/26/18 error handling??
