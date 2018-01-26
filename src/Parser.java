@@ -10,6 +10,8 @@ public class Parser {
 
     private HashMap<Pair<Term, Term>, Rule> parseTable;
 
+    SymbolTable masterSymbolTable;
+
     private Scaner scaner; // ???
 
     private Terminal tEOF, tPublic, tClass, tId, tStatic, tVoid, tMain, tExtends, tReturn, tBoolean, tInt,
@@ -26,15 +28,18 @@ public class Parser {
         rules = new ArrayList<Rule>();
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
         parseStack = new Stack<Term>();
+        masterSymbolTable = new SymbolTable(null);
+
 
         completeTerms();
         addRules();
         fillParseTable();
 
-        scaner = new Scaner(null);
+        scaner = new Scaner(masterSymbolTable);
 
         parseStack.push(new Terminal("$"));
-        parseStack.push(new Nonterminal("Goal"));
+//        parseStack.push(new Nonterminal("Goal"));
+        parseStack.push(ntGoal);
     }
 
     public void startParsing() {
@@ -90,11 +95,11 @@ public class Parser {
                         }
 
                     } else {
-                        System.out.println("error?");
                         int oldTmpCII = scaner.getCurInputIndex() - nextToken.getName().length();
                         while (nextToken != null &&  // while nextToken is not in follow set of top
                                 (!((Nonterminal)top).getFollows().contains(new Terminal(nextToken.getName()))) && // when token is in follow
                                 (!((Nonterminal)top).getFirsts().contains(new Terminal(nextToken.getName())))) { // when token is in first
+                            System.out.println("Parser ignoring: " + nextToken);
                             nextToken = scaner.getNextToken();
                         }
                         if (nextToken != null) {

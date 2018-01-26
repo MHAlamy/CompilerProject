@@ -7,16 +7,15 @@ public class SymbolTable {
 
     ArrayList<SymbolRow> symbolRows;
 
-    public SymbolTable(SymbolTable container, boolean isClass) {
+    public SymbolTable(SymbolTable container) {
         this.container = container;
-        this.isClass = isClass;
         symbolRows = new ArrayList<SymbolRow>();
     }
-    public SymbolTable(boolean isClass) {
-        container = null;
-        this.isClass = isClass;
-        symbolRows = new ArrayList<SymbolRow>();
-    }
+//    public SymbolTable(boolean isClass) {
+//        container = null;
+//        this.isClass = isClass;
+//        symbolRows = new ArrayList<SymbolRow>();
+//    }
 
     public SymbolTable getContainer() {
         return container;
@@ -30,13 +29,26 @@ public class SymbolTable {
         return isClass;
     }
 
-    public int getIdIndex(String inputId) { // returns -1 if id is not already defined
-        return symbolRows.indexOf(new SymbolRow(inputId));
+    public void setClass(boolean aClass) {
+        isClass = aClass;
     }
 
-    public int insertId(String inputId) { // returns added id's index
-        symbolRows.add(new SymbolRow(inputId));
-        return symbolRows.size() - 1; // insertId is added at the end of list
+    public Index getIdIndex(String inputId) { // returns -1 if id is not already defined
+        Index res;
+        int rowNum = symbolRows.indexOf(new SymbolRow(this, inputId));
+
+        if (rowNum >= 0) {
+            res = new Index(symbolRows.get(rowNum));
+        } else {
+            res = null; // was not found
+        }
+
+        return res;
+    }
+
+    public Index insertId(String inputId) { // returns added id's index
+        symbolRows.add(new SymbolRow(this, inputId));
+        return new Index(symbolRows.get(symbolRows.size() - 1)); // insertId is added at the end of list
     }
 
     @Override
@@ -47,13 +59,26 @@ public class SymbolTable {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return ("Symbol table : " + name);
+    }
 }
 
 class SymbolRow {
+    private SymbolTable symbolTable;
     private String idName;
-    private ArrayList<String> attributes;
 
-    public SymbolRow(String idName) {
+    private String type; // class, func, var
+
+    private SymbolTable target; // only if is class or func;
+
+    private ArrayList<String> attributes; // ???
+
+
+    public SymbolRow(SymbolTable symbolTable, String idName) {
+        this.symbolTable = symbolTable;
         this.idName = idName;
         attributes = new ArrayList<String>();
     }
@@ -66,11 +91,30 @@ class SymbolRow {
         return attributes;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public SymbolTable getTarget() {
+        return target;
+    }
+
+    public void setTarget(SymbolTable target) {
+        this.target = target;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        return (obj.getClass().equals(SymbolRow.class)) &&
-                (((SymbolRow)obj).getIdName().equals(this.getIdName()));
+    public boolean equals(Object obj) { // CONSIDERS ONLY NAME
+        return (obj.getClass().equals(this.getClass())) &&
+                (((SymbolRow)obj).getIdName().equals(this.getIdName())); // may consider type for supporting same names
+    }
 
-
+    @Override
+    public String toString() {
+        return ("ID " + idName + " in : " + symbolTable);
     }
 }

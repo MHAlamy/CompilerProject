@@ -13,7 +13,14 @@ public class Scaner {
     private int curLine = 1; // for writing error message
     private Token lastToken;
 
+    private String stState; // classDef, normalDef, useId
+
+    private SymbolTable masterSymbolTable;
     private SymbolTable curSymbolTable;
+
+    public void setSTState(String STState) {
+        this.stState = STState;
+    }
 
     public void setCurSymbolTable(SymbolTable curSymbolTable) {
         this.curSymbolTable = curSymbolTable;
@@ -28,7 +35,10 @@ public class Scaner {
     }
 
     public Scaner(SymbolTable st) {
+        this.masterSymbolTable = st;
         curSymbolTable = st;
+
+        stState = "";
         readFile();
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
@@ -276,7 +286,6 @@ public class Scaner {
                     break loop;
 
                 default: // error has occurred
-                    // TODO: 1/24/18 error message
                     curRead = "";
                     state = 0;
                     System.out.println("SCANNER ERROR");
@@ -291,31 +300,15 @@ public class Scaner {
         if (curRead.equals("")) { // returns null if it reaches the end of input
             nextToken = null;
         } else if (keywords.contains(curRead)) {
-            nextToken = new Token(curRead, -1);
+            nextToken = new Token(curRead, null);
         } else if (isStringNumber(curRead)) {
-            nextToken = new Token("integer", Integer.parseInt(curRead));
+            nextToken = new Token("integer", new Index(Integer.parseInt(curRead)));
         } else { // it's an identifier
 //            nextToken = new Token("identifier", 0);
 //            nextToken = new Token(curRead, 0);
-            nextToken = new Token("id", 0);
+//            nextToken = new Token("id", new Index());
+            nextToken = fixIdToken(curRead);
 
-
-            /*SymbolTable tmpST = curSymbolTable;
-            boolean wasFound = false;
-            while (tmpST != null) {
-                if (tmpST.getIdIndex(curRead) != -1) { // was found
-                    wasFound = true;
-                    break;
-                } else {
-                    tmpST = tmpST.getContainer();
-                }
-            }
-            if (wasFound) {
-                // ???
-            } else { // add to curSymbolTable
-//                int index = curSymbolTable.insertId(curRead);
-                // index???
-            }*/
             // TODO: 1/22/18 how to return this ST's info?
             // TODO: 1/21/18 fix index in symbol table
         }
@@ -324,6 +317,65 @@ public class Scaner {
         lastToken = nextToken;
 
         return nextToken;
+    }
+
+    private Token fixIdToken(String curRead) {
+        SymbolTable tmpST = curSymbolTable;
+        Index index = null;
+
+        if (stState.equals("classDef")) {
+            Index foundIndex = masterSymbolTable.getIdIndex(curRead);
+            if (foundIndex == null) { // ok, add new class
+                foundIndex = masterSymbolTable.insertId(curRead);
+                SymbolRow tmpSR = foundIndex.getRowPointer();
+
+                tmpSR.setType("class");
+                tmpSR.setTarget(new SymbolTable(null)); // container will be set if there is extends afterward
+                tmpSR.getTarget().setClass(true);
+                setCurSymbolTable(tmpSR.getTarget());
+
+                return new Token("id", foundIndex);
+                // TODO: 1/26/18 change table???
+            } else { // error, return found class??
+                System.out.println("Error at line " + curLine + ". Class " + curRead +
+                        " was already defined. this input will be counted as old class'");
+                return new Token("id", foundIndex);
+            }
+        } else {
+            boolean wasFound = false;
+            while (tmpST != null) {
+                index = tmpST.getIdIndex(curRead);
+
+                if (index != null) { // was found
+                    wasFound = true;
+                    break;
+                } else {
+                    tmpST = tmpST.getContainer();
+                }
+            }
+            if (wasFound) {
+                if (stState.equals("classDef")) {
+
+                } else if (stState.equals("normalDef")) {
+
+                } else { // useID
+
+                }
+                return new Token("id", index);
+            } else { // add to curSymbolTable
+                if (stState.equals("classDef")) {
+
+                } else if (stState.equals("normalDef")) {
+
+                } else { // useID
+
+                }
+
+                index = curSymbolTable.insertId(curRead);
+                return new Token("id", index);
+            }
+        }
+
     }
 
     private void readFile() { // reads the file char by char and puts it in input ArrayList

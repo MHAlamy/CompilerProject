@@ -1,10 +1,10 @@
 public class Token {
     private String name;
-    private int attr;
+    private Index index;
 
-    public Token(String key, int attr) {
+    public Token(String key, Index index) {
         this.name = key;
-        this.attr = attr;
+        this.index = index;
     }
 
     public Token(String key) {
@@ -15,12 +15,44 @@ public class Token {
         return name;
     }
 
-    public int getAttr() {
-        return attr;
+    public Index getIndex() {
+        return index;
     }
 
     @Override
     public String toString() {
-        return "<" + name + ", " + attr + ">";
+        return "<" + name + ", " + index + ">";
+    }
+}
+
+class Index {
+    private boolean isInt;
+    private int value; // only if isInt
+    private SymbolRow rowPointer; // otherwise, if is ID
+
+    public Index(int value) {
+        isInt = true;
+        this.value = value;
+    }
+
+    public Index(SymbolRow rowPointer) {
+        isInt = false;
+        this.rowPointer = rowPointer;
+    }
+
+    public void setRowPointer(SymbolRow rowPointer) {
+        this.rowPointer = rowPointer;
+    }
+
+    public boolean isInt() {
+        return isInt;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public SymbolRow getRowPointer() {
+        return rowPointer;
     }
 }
