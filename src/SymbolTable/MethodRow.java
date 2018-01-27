@@ -14,7 +14,8 @@ public class MethodRow extends NonClassRow {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.MethodRow: " + getName() + ", and has type " + getType() + ". is in table : " + getContainer().getName() + "\n";
+        res += "SymbolTable.MethodRow: " + getName() + ", and has type " + getType() + ". is in table : " +
+                getContainer().getName() + " and address " + getAddress() + "\n";
         if (methodSymbolTable != null) {
             res += "\t" + methodSymbolTable.toString().replaceAll("\\n", "\n\t");
         }

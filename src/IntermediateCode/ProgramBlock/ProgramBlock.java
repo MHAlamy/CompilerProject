@@ -12,6 +12,9 @@ public class ProgramBlock {
         currentRow = 0;
         currentAllocRow = 500;
         rows = new ArrayList<>(1000);
+        for (int i = 0; i < 1000; i++) {
+            rows.add(null);
+        }
     }
 
     public int getValueAtRow(int rowNumber) throws Exception {

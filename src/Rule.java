@@ -90,5 +90,13 @@ class Nonterminal extends Symbol {
 }
 
 class ActionSymbol extends Term{
+    private String functionName;
 
+    public ActionSymbol(String functionName) {
+        this.functionName = functionName;
+    }
+
+    public String getFunctionName() {
+        return functionName;
+    }
 }
