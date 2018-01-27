@@ -197,7 +197,7 @@ public class Parser {
                         break;
 
                     case "createScopeEntry":
-                        nextToken = scaner.getNextToken();
+//                        nextToken = scaner.getNextToken();
                         try {
                             icg.createScopeEntry(nextToken);
                         } catch (Exception e) {
@@ -260,7 +260,7 @@ public class Parser {
         ntFieldDecs = new Nonterminal("FieldDecs");
         ntFieldDec = new Nonterminal("FieldDec");
         ntMethodDecs = new Nonterminal("MethodDecs");
-        ntType = new Nonterminal("SymbolTable.Row.Type");
+        ntType = new Nonterminal("Type");
         ntVarDec = new Nonterminal("VarDec");
         ntMethodDec = new Nonterminal("MethodDec");
         ntPrmts = new Nonterminal("Prmts");
@@ -379,15 +379,17 @@ public class Parser {
 
         rules.add(new Rule(ntSource, new ArrayList<Term>(Arrays.asList(ntClassDecs, ntMainClass)))); // 1
 
-        rules.add(new Rule(ntMainClass, new ArrayList<Term>(Arrays.asList(tPublic, tClass, setClassFlag,
-                createScopeEntry, tId, unsetClassFlag, tCurlyBraceOpen, getInScope, tPublic, tStatic, tVoid,
-                tMain, tParanOpen, tParanClose, tCurlyBraceOpen, getInScope, ntVarDecs, ntStmts, getOutOfScope,
+        rules.add(new Rule(ntMainClass, new ArrayList<Term>(Arrays.asList(tPublic, setClassFlag, tClass,
+                createScopeEntry, tId, unsetClassFlag, tCurlyBraceOpen, getInScope, setMethodFlag, // ???
+                tPublic, tStatic, tVoid, createScopeEntry, // ???
+                tMain, getInScope, unsetMethodFlag, ///???
+                tParanOpen, tParanClose, tCurlyBraceOpen, getInScope, ntVarDecs, ntStmts, getOutOfScope, // /??
                 tCurlyBraceClose, getOutOfScope, tCurlyBraceClose)))); // 2
 
         rules.add(new Rule(ntClassDecs, new ArrayList<Term>(Arrays.asList(ntClassDec, ntClassDecs)))); // 3
         rules.add(new Rule(ntClassDecs, new ArrayList<Term>())); // 4
 
-        rules.add(new Rule(ntClassDec, new ArrayList<Term>(Arrays.asList(tClass, setClassFlag, createScopeEntry,
+        rules.add(new Rule(ntClassDec, new ArrayList<Term>(Arrays.asList(setClassFlag, tClass,  createScopeEntry,
                 tId, ntExtension, unsetClassFlag, tCurlyBraceOpen, getInScope, ntFieldDecs, ntMethodDecs,
                 getOutOfScope, tCurlyBraceClose)))); // 5
 

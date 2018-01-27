@@ -40,15 +40,12 @@ public class SymbolTableManager {
                 return masterSymbolTable.getRow(tmpRow);
 
             case DEFINE_FIELD:
+            case DEFINE_VAR:
                 tmpRow = new VarRow(currentSymbolTable, name); // ???
                 return currentSymbolTable.getRow(tmpRow);
 
             case DEFINE_METHOD:
                 tmpRow = new MethodRow(currentSymbolTable, name); // ???
-                return currentSymbolTable.getRow(tmpRow);
-
-            case DEFINE_VAR:
-                tmpRow = new VarRow(currentSymbolTable, name); // ???
                 return currentSymbolTable.getRow(tmpRow);
 
             case DEFAULT:
@@ -80,6 +77,7 @@ public class SymbolTableManager {
                 return masterSymbolTable.insertRow(tmpRow);
 
             case DEFINE_FIELD:
+            case DEFINE_VAR:
                 tmpRow = new VarRow(currentSymbolTable, name); // ???
                 address = programBlock.allocateInteger();
                 ((VarRow)tmpRow).setAddress(address);
@@ -89,12 +87,8 @@ public class SymbolTableManager {
                 tmpRow = new MethodRow(currentSymbolTable, name); // ???
                 address = programBlock.getCurrentRow();
                 ((MethodRow)tmpRow).setAddress(address);
-                return currentSymbolTable.insertRow(tmpRow);
-
-            case DEFINE_VAR:
-                tmpRow = new VarRow(currentSymbolTable, name); // ???
-                address = programBlock.allocateInteger();
-                ((VarRow)tmpRow).setAddress(address);
+                MethodSymbolTable tmp = new MethodSymbolTable(name, (ClassSymbolTable)currentSymbolTable);
+                ((MethodRow) tmpRow).setMethodSymbolTable(tmp);
                 return currentSymbolTable.insertRow(tmpRow);
 
             default: // USING UNDEFINED ID! ERROR!!!!
@@ -130,12 +124,12 @@ public class SymbolTableManager {
             Row foundRow = null;
 
             while (currentSymbolTable != null) {
-                try {
-                    Thread.sleep(100);
-                } catch (Exception e) {
-                    System.out.println("efjis"
-                    );
-                }
+//                try {
+//                    Thread.sleep(100);
+//                } catch (Exception e) {
+//                    System.out.println("efjis"
+//                    );
+//                }
                 foundRow = findRowInCurrentSymbolTable(name);
 
                 if (foundRow != null) { // was found
@@ -162,7 +156,7 @@ public class SymbolTableManager {
                     case DEFINE_VAR:
                     case DEFINE_METHOD:
                         if (currentSymbolTable.equals(backupSymbolTable)) {
-                            System.out.println("Variable/Function " + name + " is already in this scope." +
+                            System.out.println("Variable/Function " + name + " is already defined in this scope." +
                                     " this declaration will be ignored");
                             // TODO: 1/26/18 what to do if ID is for function?
 
@@ -202,6 +196,7 @@ public class SymbolTableManager {
         }
         scopeState = ScopeState.DEFAULT;
 
+        System.out.println("FOUND ROW " + res.getName());
         System.out.println(masterSymbolTable + "\n\n");
         return res;
     }
@@ -224,17 +219,21 @@ public class SymbolTableManager {
             throw new Exception("Scope Entry corrupted");
 
         currentSymbolTable = destination;
+//        System.out.println("ENTERED NEW SCOPE " + currentSymbolTable.getName());
     }
 
     public void getOutOfScope() throws Exception {
         SymbolTable destination = null;
+
         if (currentSymbolTable instanceof ClassSymbolTable)
             destination = masterSymbolTable;
         else if (currentSymbolTable instanceof MethodSymbolTable)
             destination = ((MethodSymbolTable) currentSymbolTable).getContainerClass();
         else
             throw new Exception("Trying to get out of master");
+
         currentSymbolTable = destination;
+//        System.out.println("EXITED TO SCOPE " + currentSymbolTable.getName());
     }
 
     public Row getScopeEntryRow() {

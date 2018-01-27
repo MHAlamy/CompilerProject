@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Scaner {
-    private String fileAddress = "/home/mha/Desktop/Compiler Project/input.txt";
+    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/input.txt";
 
     private ArrayList<String> keywords = new ArrayList<String>();
     private ArrayList<Character> input = new ArrayList<Character>();
@@ -28,10 +28,10 @@ public class Scaner {
 
         readFile();
 
-        keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
+        keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "(", ")", "}",
                 "extends", "return", ";", ",", "boolean", "int", "if", "else", "while", "for",
                 "System", "out", "println", "true", "false", "&&", "+", "*", "-", "=", "+=", "==", ".", "<",
-                "identifier", "integer"));
+                "identifier", "integer"));// , "main"));
 //        }
     }
 
@@ -290,6 +290,9 @@ public class Scaner {
             nextToken = new Token("integer", new ValueIndex(Integer.parseInt(curRead)));
         } else if (keywords.contains(curRead)) {
             nextToken = new Token(curRead, null);
+        } else if (curRead.equals("main")) {
+            nextToken = createIdToken(curRead); /// ????
+            nextToken.setName(curRead);
         } else { // it's an identifier
 //            nextToken = new Token("identifier", 0);
 //            nextToken = new Token(curRead, 0);

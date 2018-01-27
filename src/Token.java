@@ -13,6 +13,10 @@ public class Token {
         this.name = key;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

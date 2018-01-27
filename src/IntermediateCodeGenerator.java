@@ -17,6 +17,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void setClassFlag() {
+        System.out.println("jfiesoogejiejof");
         parser.getSymbolTableManager().setScopeState(ScopeState.DEFINE_CLASS);
     }
 
@@ -49,7 +50,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void getInScope() throws Exception {
-        System.out.println("GETINSIDE");
+//        System.out.println("GETINSIDE");
         symbolTableManager.getInScope();
     }
 
@@ -58,12 +59,13 @@ public class IntermediateCodeGenerator {
     }
 
     public void createScopeEntry(Token nextToken) throws Exception {
+//        System.out.println("creating jiji");
         Row entry = null;
         if (nextToken.getIndex() instanceof RowIndex)
             entry = ((RowIndex) nextToken.getIndex()).getRow();
         else
-            System.out.println("NOTMATCH" + nextToken.getIndex().getClass());
-//            throw new Exception("entry row not found!");
+//            System.out.println("NOTMATCH" + nextToken.getIndex().getClass());
+            throw new Exception("entry row not found!");
 
         symbolTableManager.setScopeEntryRow(entry);
     }
