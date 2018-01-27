@@ -8,6 +8,10 @@ public abstract class SymbolTable {
 
     private String name;
 
+    public SymbolTable(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
@@ -40,6 +44,7 @@ public abstract class SymbolTable {
 //        }
 //        return res;
 //    }
+
 }
 
 class ClassSymbolTable extends SymbolTable {
@@ -48,7 +53,8 @@ class ClassSymbolTable extends SymbolTable {
     private ClassSymbolTable parentClass;
     private ArrayList<NonClassRow> nonClassRows;
 
-    public ClassSymbolTable(MasterSymbolTable masterSymbolTable) {
+    public ClassSymbolTable(String name, MasterSymbolTable masterSymbolTable) {
+        super(name);
         this.masterSymbolTable = masterSymbolTable;
         parentClass = null;
         nonClassRows = new ArrayList<NonClassRow>();
@@ -87,6 +93,19 @@ class ClassSymbolTable extends SymbolTable {
         nonClassRows.add(temp);
         return temp;
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += ("ClassSymbolTable : " + getName() + ". Parent is = " +
+                ((parentClass == null) ? ("NULL") : (parentClass.getName())) +
+                "\n-----------------------------------------------\n");
+        for (Row row :
+                nonClassRows) {
+            res += row;
+        }
+        return res;
+    }
 }
 
 class MethodSymbolTable extends SymbolTable {
@@ -94,7 +113,8 @@ class MethodSymbolTable extends SymbolTable {
     private ClassSymbolTable containerClass;
     private ArrayList<VarRow> varRows;
 
-    public MethodSymbolTable(ClassSymbolTable containerClass) {
+    public MethodSymbolTable(String name, ClassSymbolTable containerClass) {
+        super(name);
         this.containerClass = containerClass;
         varRows = new ArrayList<VarRow>();
     }
@@ -128,13 +148,26 @@ class MethodSymbolTable extends SymbolTable {
         varRows.add(temp);
         return temp;
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += ("MethodSymbolTable : " + getName() + ". Container is = " +
+                ((containerClass == null) ? ("NULL") : (containerClass.getName())) + "\n-----------------------------------------------\n");
+        for (Row row :
+                varRows) {
+            res += row;
+        }
+        return res;
+    }
 }
 
 class MasterSymbolTable extends SymbolTable {
 
     private ArrayList<ClassRow> classRows;
 
-    public MasterSymbolTable() {
+    public MasterSymbolTable(String name) {
+        super(name);
         classRows = new ArrayList<ClassRow>();
     }
 
@@ -159,21 +192,27 @@ class MasterSymbolTable extends SymbolTable {
 
     @Override
     public ClassRow insertRow(String name) {
-        ClassSymbolTable classSymbolTable = new ClassSymbolTable(this);
+        ClassSymbolTable classSymbolTable = new ClassSymbolTable(name, this);
         ClassRow temp = new ClassRow(this, name, classSymbolTable);
         classRows.add(temp);
         return temp;
+    }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += ("MasterSymbolTable : " + getName() + "\n-----------------------------------------------\n");
+        for (Row row :
+                classRows) {
+            res += row;
+        }
+        return res;
     }
 }
 
 abstract class Row {
     private SymbolTable container;
     private String name;
-
-//    private SymbolTable target; // only if is class or func;
-
-//    private ArrayList<String> attributes; // ???
-
 
     public Row(SymbolTable container, String name) {
         this.container = container;
@@ -184,18 +223,6 @@ abstract class Row {
     public String getName() {
         return name;
     }
-
-//    public ArrayList<String> getAttributes() {
-//        return attributes;
-//    }
-
-//    public SymbolTable getTarget() {
-//        return target;
-//    }
-
-//    public void setTarget(SymbolTable target) {
-//        this.target = target;
-//    }
 
     public SymbolTable getContainer() {
         return container;
@@ -233,6 +260,18 @@ class ClassRow extends Row {
     public ClassSymbolTable getClassSymbolTable() {
         return classSymbolTable;
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += "ClassRow: " + getName() + ". is in table : " + getContainer().getName() + "\n";
+        if (classSymbolTable != null) {
+            res += "\t" + classSymbolTable.toString().replaceAll("\\n", "\n\t");
+        }
+        res += "\n";
+
+        return res;
+    }
 }
 
 class NonClassRow extends Row {
@@ -258,6 +297,14 @@ class NonClassRow extends Row {
     public void setAddress(int address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += "NonClassRow: " + getName() + ", and has type " + type + ". is in table : " + getContainer().getName() + "\n";
+
+        return res;
+    }
 }
 
 class MethodRow extends NonClassRow {
@@ -267,10 +314,30 @@ class MethodRow extends NonClassRow {
         super(container, name);
 //        this.methodSymbolTable = methodSymbolTable;
     }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += "MethodRow: " + getName() + ", and has type " + getType() + ". is in table : " + getContainer().getName() + "\n";
+        if (methodSymbolTable != null) {
+            res += "\t" + methodSymbolTable.toString().replaceAll("\\n", "\n\t");
+        }
+        res += "\n";
+
+        return res;
+    }
 }
 
 class VarRow extends NonClassRow {
     public VarRow(SymbolTable container, String name) {
         super(container, name);
+    }
+
+    @Override
+    public String toString() {
+        String res = "";
+        res += "VarRow: " + getName() + ", and has type " + getType() + ". is in table : " + getContainer().getName() + "\n";
+
+        return res;
     }
 }

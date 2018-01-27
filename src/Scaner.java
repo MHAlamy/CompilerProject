@@ -321,10 +321,9 @@ public class Scaner {
     }
 
     private Token fixIdToken(String curRead) {
-//        System.out.println("Adding ID " + curRead + ". state is : " + stState + "\n");
+        System.out.println("Adding ID " + curRead + ". state is : " + stState + "\n");
 
         SymbolTable tmpST = curSymbolTable;
-        Index index = null;
         Token res;
 
         if (stState.equals("classDef")) {
@@ -409,7 +408,7 @@ public class Scaner {
                     }
                 } else {
                     res = new Token("id", new RowIndex(foundRow));
-//                    System.out.println("ACCESSED " + curRead + ", inside " + index.getRowPointer().getContainer().getName() + "\n");
+                    System.out.println("ACCESSED " + curRead + ", inside " + foundRow.getContainer().getName() + "\n");
                 }
                 // if state is useID or variable was already defined:
 
@@ -437,7 +436,7 @@ public class Scaner {
         stState = "";
 
 //        System.out.println("Symbol Table Result: ");
-//        System.out.println(masterSymbolTable + "\n\n");
+        System.out.println(masterSymbolTable + "\n\n");
         return res;
 
     }
