@@ -124,6 +124,7 @@ public class SymbolTableManager {
                 else
                     System.out.println("********Type not found for parameter declaration*******");
 
+                System.out.println("INSERTING");
                 return currentSymbolTable.insertRow(tmpRow);
 
             case DEFINE_METHOD:
@@ -174,9 +175,9 @@ public class SymbolTableManager {
                         " was already defined. this input will be counted as old class'");
                 res = foundRow;
             }
-        }
-
-        else {
+        } else if (scopeState.equals(ScopeState.DEFINE_PAR)) {
+            res = declareRow(name);
+        } else {
             SymbolTable backupSymbolTable = currentSymbolTable;
             boolean wasFound = false;
 

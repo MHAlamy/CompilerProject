@@ -105,7 +105,7 @@ public class IntermediateCodeGenerator {
         else
             throw new Exception("Token is not type");
 
-        System.out.println("IS SAVING " + semanticStack.size());
+//        System.out.println("IS SAVING " + semanticStack.size());
     }
 
 }
