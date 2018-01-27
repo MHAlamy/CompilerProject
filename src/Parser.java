@@ -66,10 +66,10 @@ public class Parser {
             Term top = parseStack.peek();
             tokenName = nextToken.getName();
 
-            if (tokenName.equals("class")) {
-                symbolTableManager.setScopeState(ScopeState.DEFINE_CLASS);
-            } if (tokenName.equals("boolean") || tokenName.equals("int"))
-                symbolTableManager.setScopeState(ScopeState.DEFINE_VAR);
+//            if (tokenName.equals("class")) {
+//                symbolTableManager.setScopeState(ScopeState.DEFINE_CLASS);
+//            } if (tokenName.equals("boolean") || tokenName.equals("int"))
+//                symbolTableManager.setScopeState(ScopeState.DEFINE_VAR);
 //            else
 //                scaner.setSTState("useID");
 
@@ -146,7 +146,6 @@ public class Parser {
             } else {
 //                System.out.println("ELSEEEEEE");
                 parseStack.pop();
-                nextToken = scaner.getNextToken();
                 ActionSymbol as = (ActionSymbol)top;
                 switch (as.getFunctionName()) {
                     case "setClassFlag":
@@ -198,6 +197,7 @@ public class Parser {
                         break;
 
                     case "createScopeEntry":
+                        nextToken = scaner.getNextToken();
                         try {
                             icg.createScopeEntry(nextToken);
                         } catch (Exception e) {

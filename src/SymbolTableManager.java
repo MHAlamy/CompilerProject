@@ -113,7 +113,7 @@ public class SymbolTableManager {
             if (foundRow == null) { // ok, add new class
                 foundRow = declareRow(name);
                 //TODO: scope in here
-                currentSymbolTable = ((ClassRow)foundRow).getClassSymbolTable();
+//                currentSymbolTable = ((ClassRow)foundRow).getClassSymbolTable();
                 res = foundRow;
             } else { // error, return found class??
                 //TODO: extension is in define_class state or not
@@ -130,6 +130,12 @@ public class SymbolTableManager {
             Row foundRow = null;
 
             while (currentSymbolTable != null) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                    System.out.println("efjis"
+                    );
+                }
                 foundRow = findRowInCurrentSymbolTable(name);
 
                 if (foundRow != null) { // was found

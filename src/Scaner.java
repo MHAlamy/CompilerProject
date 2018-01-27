@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Scaner {
-    private ArrayList<Character> input = new ArrayList<Character>();
-    private String fileAddress = "/Users/MohammadReza/Desktop/Uni/Programs/CompilerProject/src/TestFiles/SymbolTableTest.txt";
+    private String fileAddress = "/home/mha/Desktop/Compiler Project/input.txt";
 
     private ArrayList<String> keywords = new ArrayList<String>();
+    private ArrayList<Character> input = new ArrayList<Character>();
 
     private int curInputIndex = 0;
     private int curLine = 1; // for writing error message
