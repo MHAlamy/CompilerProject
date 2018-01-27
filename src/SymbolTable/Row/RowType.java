@@ -5,6 +5,6 @@ import SymbolTable.SymbolTable;
 /**
  * Created by mha on 1/27/18.
  */
-public enum Type {
+public enum RowType {
     INT, BOOL
 }

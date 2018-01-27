@@ -9,7 +9,7 @@ public class VarRow extends NonClassRow {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.VarRow: " + getName() + ", and has type " + getType() + ". is in table : " +
+        res += "SymbolTable.VarRow: " + getName() + ", and has type " + getRowType() + ". is in table : " +
                 getContainer().getName() + " and address " + getAddress() + "\n";
 
         return res;

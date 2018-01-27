@@ -7,8 +7,8 @@ public class StringSSObject extends SSObject {
 
     private String value;
 
-    public StringSSObject(SSType type, String value) {
-        super(type);
+    public StringSSObject(String value) {
+        super(SSType.STRING);
         this.value = value;
     }
 

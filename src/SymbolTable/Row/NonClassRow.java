@@ -6,19 +6,19 @@ import SymbolTable.SymbolTable;
  */
 public class
 NonClassRow extends Row {
-    private Type type;
+    private RowType rowType;
     private int address;
 
     public NonClassRow(SymbolTable container, String name) {
         super(container, name);
     }
 
-    public Type getType() {
-        return type;
+    public RowType getRowType() {
+        return rowType;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public void setRowType(RowType rowType) {
+        this.rowType = rowType;
     }
 
     public int getAddress() {
@@ -32,7 +32,7 @@ NonClassRow extends Row {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.Row.NonClassRow: " + getName() + ", and has type " + type + ". is in table : " + getContainer().getName() + "\n";
+        res += "SymbolTable.Row.NonClassRow: " + getName() + ", and has rowType " + rowType + ". is in table : " + getContainer().getName() + "\n";
 
         return res;
     }

@@ -1,4 +1,5 @@
 import IntermediateCode.ProgramBlock.ProgramBlock;
+import IntermediateCode.SemanticStack.SemanticStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +13,7 @@ public class Parser {
     private Stack<Term> parseStack;
     private SymbolTableManager symbolTableManager;
     private IntermediateCodeGenerator icg;
+    private SemanticStack semanticStack;
 
     private Scaner scaner; // ???
 
@@ -33,9 +35,9 @@ public class Parser {
         rules = new ArrayList<Rule>();
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
         parseStack = new Stack<Term>();
-//        masterSymbolTable = new SymbolTable.MasterSymbolTable("SymbolTable.MasterSymbolTable");
-        symbolTableManager = new SymbolTableManager();
-        icg = new IntermediateCodeGenerator(this);
+        semanticStack = new SemanticStack();
+        symbolTableManager = new SymbolTableManager(semanticStack);
+        icg = new IntermediateCodeGenerator(this, semanticStack);
         // TODO: 1/27/18 fix program block
         symbolTableManager.setProgramBlock(new ProgramBlock());
 
@@ -180,6 +182,14 @@ public class Parser {
                         icg.unsetVarFlag();
                         break;
 
+                    case "setParFlag":
+                        icg.setParFlag();
+                        break;
+
+                    case "unsetParFlag":
+                        icg.unsetParFlag();
+                        break;
+
                     case "getInScope":
                         try {
                             icg.getInScope();
@@ -204,6 +214,13 @@ public class Parser {
                             e.printStackTrace();
                         }
                         break;
+
+                    case "saveType":
+                        try {
+                            icg.saveType(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                 }
             }
 
@@ -260,7 +277,7 @@ public class Parser {
         ntFieldDecs = new Nonterminal("FieldDecs");
         ntFieldDec = new Nonterminal("FieldDec");
         ntMethodDecs = new Nonterminal("MethodDecs");
-        ntType = new Nonterminal("Type");
+        ntType = new Nonterminal("RowType");
         ntVarDec = new Nonterminal("VarDec");
         ntMethodDec = new Nonterminal("MethodDec");
         ntPrmts = new Nonterminal("Prmts");

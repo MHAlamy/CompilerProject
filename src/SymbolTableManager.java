@@ -1,4 +1,6 @@
 import IntermediateCode.ProgramBlock.ProgramBlock;
+import IntermediateCode.SemanticStack.Object.StringSSObject;
+import IntermediateCode.SemanticStack.SemanticStack;
 import SymbolTable.*;
 import SymbolTable.Row.*;
 
@@ -8,14 +10,17 @@ public class SymbolTableManager {
     private ScopeState scopeState;
     private SymbolTable currentSymbolTable;
     private ProgramBlock programBlock;
+    private SemanticStack semanticStack;
 
     private Row scopeEntryRow;
+    private ClassRow lastClassDefinedRow;
+    private MethodRow lastDefinedMethodRow;
 
-    public SymbolTableManager() {
+    public SymbolTableManager(SemanticStack semanticStack) {
         masterSymbolTable = new MasterSymbolTable("SymbolTableManager");
         scopeState = ScopeState.DEFAULT;
         currentSymbolTable = masterSymbolTable;
-
+        this.semanticStack = semanticStack;
     }
 
     //TODO: set STM program block
@@ -73,7 +78,7 @@ public class SymbolTableManager {
             case DEFINE_CLASS:
                 classSymbolTable = new ClassSymbolTable(name, masterSymbolTable);
                 tmpRow = new ClassRow(masterSymbolTable, name, classSymbolTable);
-
+                lastClassDefinedRow = (ClassRow) tmpRow;
                 return masterSymbolTable.insertRow(tmpRow);
 
             case DEFINE_FIELD:
@@ -81,6 +86,43 @@ public class SymbolTableManager {
                 tmpRow = new VarRow(currentSymbolTable, name); // ???
                 address = programBlock.allocateInteger();
                 ((VarRow)tmpRow).setAddress(address);
+
+                //Finding type
+                String typeString;
+                RowType type;
+                if (semanticStack.peek() instanceof StringSSObject) {
+                    typeString = ((StringSSObject) semanticStack.pop()).getValue();
+                    if (typeString.equals("boolean"))
+                        type = RowType.BOOL;
+                    else
+                        type = RowType.INT;
+                    ((NonClassRow) tmpRow).setRowType(type);
+                }
+                else
+                    System.out.println("********Type not found for variable declaration*******");
+
+                return currentSymbolTable.insertRow(tmpRow);
+
+            case DEFINE_PAR:
+                tmpRow = new VarRow(currentSymbolTable, name); // ???
+                address = programBlock.allocateInteger();
+                ((VarRow)tmpRow).setAddress(address);
+
+                //Adding parameter address to method row
+                lastDefinedMethodRow.addParamterAddress(address);
+
+                //Finding type
+                if (semanticStack.peek() instanceof StringSSObject) {
+                    typeString = ((StringSSObject) semanticStack.pop()).getValue();
+                    if (typeString.equals("boolean"))
+                        type = RowType.BOOL;
+                    else
+                        type = RowType.INT;
+                    ((NonClassRow) tmpRow).setRowType(type);
+                }
+                else
+                    System.out.println("********Type not found for parameter declaration*******");
+
                 return currentSymbolTable.insertRow(tmpRow);
 
             case DEFINE_METHOD:
@@ -89,6 +131,21 @@ public class SymbolTableManager {
                 ((MethodRow)tmpRow).setAddress(address);
                 MethodSymbolTable tmp = new MethodSymbolTable(name, (ClassSymbolTable)currentSymbolTable);
                 ((MethodRow) tmpRow).setMethodSymbolTable(tmp);
+
+                lastDefinedMethodRow = (MethodRow) tmpRow;
+
+                //Finding type
+                if (semanticStack.peek() instanceof StringSSObject) {
+                    typeString = ((StringSSObject) semanticStack.pop()).getValue();
+                    if (typeString.equals("boolean"))
+                        type = RowType.BOOL;
+                    else
+                        type = RowType.INT;
+                    ((NonClassRow) tmpRow).setRowType(type);
+                }
+                else
+                    System.out.println("********Type not found for method declaration******");
+
                 return currentSymbolTable.insertRow(tmpRow);
 
             default: // USING UNDEFINED ID! ERROR!!!!
@@ -243,8 +300,12 @@ public class SymbolTableManager {
     public void setScopeEntryRow(Row scopeEntryRow) {
         this.scopeEntryRow = scopeEntryRow;
     }
+
+    public ClassRow getLastClassDefinedRow() {
+        return lastClassDefinedRow;
+    }
 }
 
 enum ScopeState {
-    DEFINE_CLASS, DEFINE_FIELD, DEFINE_METHOD, DEFINE_VAR, DEFAULT
+    DEFINE_CLASS, DEFINE_FIELD, DEFINE_METHOD, DEFINE_VAR, DEFINE_PAR, DEFAULT
 }

@@ -2,6 +2,7 @@ import IntermediateCode.Instruction.Instruction;
 import IntermediateCode.Instruction.InstructionParameter.IntegerIP;
 import IntermediateCode.Instruction.InstructionType;
 import IntermediateCode.ProgramBlock.ProgramBlock;
+import IntermediateCode.SemanticStack.Object.StringSSObject;
 import IntermediateCode.SemanticStack.SemanticStack;
 import SymbolTable.Row.Row;
 import SymbolTable.Row.ClassRow;
@@ -13,12 +14,10 @@ public class IntermediateCodeGenerator {
     private Parser parser;
     private SymbolTableManager symbolTableManager;
 
-    private ClassRow lastClassDefinedRow;
-
-    public IntermediateCodeGenerator(Parser parser) {
+    public IntermediateCodeGenerator(Parser parser, SemanticStack semanticStack) {
         this.parser = parser;
         programBlock = new ProgramBlock();
-        semanticStack = new SemanticStack();
+        this.semanticStack = semanticStack;
         symbolTableManager = parser.getSymbolTableManager();
     }
 
@@ -55,6 +54,14 @@ public class IntermediateCodeGenerator {
         parser.getSymbolTableManager().setScopeState(ScopeState.DEFAULT);
     }
 
+    public void setParFlag() {
+        parser.getSymbolTableManager().setScopeState(ScopeState.DEFINE_PAR);
+    }
+
+    public void unsetParFlag() {
+        parser.getSymbolTableManager().setScopeState(ScopeState.DEFAULT);
+    }
+
     public void getInScope() throws Exception {
 //        System.out.println("GETINSIDE");
         symbolTableManager.getInScope();
@@ -68,8 +75,6 @@ public class IntermediateCodeGenerator {
         Row entry = null;
         if (nextToken.getIndex() instanceof RowIndex) {
             entry = ((RowIndex) nextToken.getIndex()).getRow();
-            if (entry instanceof ClassRow)
-                lastClassDefinedRow = (ClassRow) entry;
         }
         else
             throw new Exception("entry row not found!");
@@ -89,8 +94,16 @@ public class IntermediateCodeGenerator {
         } else
             throw new Exception("entry row not found!");
 
-        ClassRow childClassRow = lastClassDefinedRow;
+        ClassRow childClassRow = symbolTableManager.getLastClassDefinedRow();
         childClassRow.getClassSymbolTable().setParentClass(fatherClassRow.getClassSymbolTable());
+    }
+
+    public void saveType(Token nextToken) throws Exception {
+        String tokenName = nextToken.getName() ;
+        if (tokenName.equals("boolean") || tokenName.equals("int"))
+            semanticStack.push(new StringSSObject(tokenName));
+        else
+            throw new Exception("Token is not type");
     }
 
 }
