@@ -1,6 +1,6 @@
 package SymbolTable;
 
-import java.util.ArrayList;
+import SymbolTable.Row.Row;
 
 public abstract class SymbolTable {
 

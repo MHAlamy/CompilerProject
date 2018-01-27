@@ -1,4 +1,7 @@
-package SymbolTable;
+package SymbolTable.Row;
+
+import SymbolTable.ClassSymbolTable;
+import SymbolTable.SymbolTable;
 
 /**
  * Created by mha on 1/27/18.
@@ -18,7 +21,7 @@ public class ClassRow extends Row {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.ClassRow: " + getName() + ". is in table : " + getContainer().getName() + "\n";
+        res += "SymbolTable.Row.ClassRow: " + getName() + ". is in table : " + getContainer().getName() + "\n";
         if (classSymbolTable != null) {
             res += "\t" + classSymbolTable.toString().replaceAll("\\n", "\n\t");
         }

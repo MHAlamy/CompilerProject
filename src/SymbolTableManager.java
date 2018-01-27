@@ -1,5 +1,6 @@
 import IntermediateCode.ProgramBlock.ProgramBlock;
 import SymbolTable.*;
+import SymbolTable.Row.*;
 
 public class SymbolTableManager {
 
@@ -7,6 +8,8 @@ public class SymbolTableManager {
     private ScopeState scopeState;
     private SymbolTable currentSymbolTable;
     private ProgramBlock programBlock;
+
+    private Row scopeEntryRow;
 
     public SymbolTableManager() {
         masterSymbolTable = new MasterSymbolTable("SymbolTableManager");
@@ -203,6 +206,36 @@ public class SymbolTableManager {
 
     public ScopeState getScopeState() {
         return scopeState;
+    }
+
+    public void getInScope() throws Exception {
+        SymbolTable destination = null;
+        if (scopeEntryRow instanceof ClassRow)
+            destination = ((ClassRow) scopeEntryRow).getClassSymbolTable();
+        else if (scopeEntryRow instanceof MethodRow)
+            destination = ((MethodRow) scopeEntryRow).getMethodSymbolTable();
+        else
+            throw new Exception("Scope Entry corrupted");
+        currentSymbolTable = destination;
+    }
+
+    public void getOutOfScope() throws Exception {
+        SymbolTable destination = null;
+        if (currentSymbolTable instanceof ClassSymbolTable)
+            destination = masterSymbolTable;
+        else if (currentSymbolTable instanceof MethodSymbolTable)
+            destination = ((MethodSymbolTable) currentSymbolTable).getContainerClass();
+        else
+            throw new Exception("Trying to get out of master");
+        currentSymbolTable = destination;
+    }
+
+    public Row getScopeEntryRow() {
+        return scopeEntryRow;
+    }
+
+    public void setScopeEntryRow(Row scopeEntryRow) {
+        this.scopeEntryRow = scopeEntryRow;
     }
 }
 

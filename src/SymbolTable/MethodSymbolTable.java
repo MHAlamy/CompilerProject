@@ -1,5 +1,8 @@
 package SymbolTable;
 
+import SymbolTable.Row.Row;
+import SymbolTable.Row.VarRow;
+
 import java.util.ArrayList;
 
 /**
@@ -27,7 +30,7 @@ public class MethodSymbolTable extends SymbolTable {
     @Override
     public VarRow getRow(Row idRow) {// throws Exception {
         VarRow res;
-//        int rowNum = nonClassRows.indexOf(new SymbolTable.NonClassRow(this, name));
+//        int rowNum = nonClassRows.indexOf(new SymbolTable.Row.NonClassRow(this, name));
         int rowNum = varRows.indexOf(idRow);
 
         if (rowNum >= 0)
@@ -40,7 +43,7 @@ public class MethodSymbolTable extends SymbolTable {
 
     @Override
     public VarRow insertRow(Row idRow) {
-//        SymbolTable.VarRow temp = new SymbolTable.VarRow(this, name);
+//        SymbolTable.Row.VarRow temp = new SymbolTable.Row.VarRow(this, name);
         varRows.add((VarRow)idRow);
         return (VarRow)idRow;
     }

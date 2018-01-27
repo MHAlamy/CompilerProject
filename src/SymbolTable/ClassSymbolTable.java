@@ -1,5 +1,10 @@
 package SymbolTable;
 
+import SymbolTable.Row.MethodRow;
+import SymbolTable.Row.NonClassRow;
+import SymbolTable.Row.Row;
+import SymbolTable.Row.VarRow;
+
 import java.util.ArrayList;
 
 /**
@@ -34,7 +39,7 @@ public class ClassSymbolTable extends SymbolTable {
     public NonClassRow getRow(Row idRow) {
         NonClassRow res;
 
-//        int rowNum = nonClassRows.indexOf(new SymbolTable.NonClassRow(this, name));
+//        int rowNum = nonClassRows.indexOf(new SymbolTable.Row.NonClassRow(this, name));
         int rowNum = nonClassRows.indexOf(idRow); // ???
 
         if (rowNum >= 0)
@@ -53,7 +58,7 @@ public class ClassSymbolTable extends SymbolTable {
         else if (idRow.getClass().equals(MethodRow.class))
             nonClassRows.add((MethodRow)idRow);
         else
-            System.out.println("ERROR! SymbolTable.Row inserted inside SymbolTable.ClassSymbolTable is INVALID");
+            System.out.println("ERROR! SymbolTable.Row.Row inserted inside SymbolTable.ClassSymbolTable is INVALID");
 
         return (NonClassRow)idRow;
     }

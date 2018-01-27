@@ -8,8 +8,8 @@ public class Parser {
     private ArrayList<Rule> rules;
     private HashMap<Pair<Term, Term>, Rule> parseTable;
     private Stack<Term> parseStack;
-//    private SymbolTable.MasterSymbolTable masterSymbolTable;
     private SymbolTableManager symbolTableManager;
+    private IntermediateCodeGenerator icg;
 
     private Scaner scaner; // ???
 
@@ -31,6 +31,7 @@ public class Parser {
         parseStack = new Stack<Term>();
 //        masterSymbolTable = new SymbolTable.MasterSymbolTable("SymbolTable.MasterSymbolTable");
         symbolTableManager = new SymbolTableManager();
+        icg = new IntermediateCodeGenerator(this);
 
         completeTerms();
         addRules();
@@ -134,8 +135,66 @@ public class Parser {
                 }
 
 
-            } else { // top is ActionSymbol
-                // TODO: 1/25/18 Intermediate code and symbol table
+            } else {
+                nextToken = scaner.getNextToken();
+                ActionSymbol as = (ActionSymbol)top;
+                switch (as.getFunctionName()) {
+                    case "setClassFlag":
+                        icg.setClassFlag();
+                        break;
+
+                    case "unsetClassFlag":
+                        icg.unsetClassFlag();
+                        break;
+
+                    case "setFieldFlag":
+                        icg.setFieldFlag();
+                        break;
+
+                    case "unsetFieldFlag":
+                        icg.unsetFieldFlag();
+                        break;
+
+                    case "setMethodFlag":
+                        icg.setMethodFlag();
+                        break;
+
+                    case "unsetMethodFlag":
+                        icg.unsetMethodFlag();
+                        break;
+
+                    case "setVarFlag":
+                        icg.setVarFlag();
+                        break;
+
+                    case "unsetVarFlag":
+                        icg.unsetVarFlag();
+                        break;
+
+                    case "getInScope":
+                        try {
+                            icg.getInScope();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "getOutOfScope":
+                        try {
+                            icg.getOutOfScope();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "createScopeEntry":
+                        try {
+                            icg.createScopeEntry(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
             }
 
         }
@@ -191,7 +250,7 @@ public class Parser {
         ntFieldDecs = new Nonterminal("FieldDecs");
         ntFieldDec = new Nonterminal("FieldDec");
         ntMethodDecs = new Nonterminal("MethodDecs");
-        ntType = new Nonterminal("SymbolTable.Type");
+        ntType = new Nonterminal("SymbolTable.Row.Type");
         ntVarDec = new Nonterminal("VarDec");
         ntMethodDec = new Nonterminal("MethodDec");
         ntPrmts = new Nonterminal("Prmts");
@@ -557,6 +616,9 @@ public class Parser {
 
     }
 
+    public SymbolTableManager getSymbolTableManager() {
+        return symbolTableManager;
+    }
 }
 
 class Pair <F, S> {

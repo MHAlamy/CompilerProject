@@ -1,4 +1,4 @@
-import SymbolTable.Row;
+import SymbolTable.Row.Row;
 
 public class Token {
     private String name;
@@ -30,21 +30,21 @@ public class Token {
 class Index {
 //    private boolean isInt;
 //    private int value; // only if isInt
-//    private SymbolTable.Row rowPointer; // otherwise, if is ID
+//    private SymbolTable.Row.Row rowPointer; // otherwise, if is ID
 
 //    public Index(int value) {
 //        isInt = true;
 //        this.value = value;
 //    }
 //
-//    public Index(SymbolTable.Row rowPointer) {
+//    public Index(SymbolTable.Row.Row rowPointer) {
 //        isInt = false;
 //        this.rowPointer = rowPointer;
 //    }
     public Index() {
 
     }
-//    public void setRowPointer(SymbolTable.Row rowPointer) {
+//    public void setRowPointer(SymbolTable.Row.Row rowPointer) {
 //        this.rowPointer = rowPointer;
 //    }
 //
@@ -56,7 +56,7 @@ class Index {
 //        return value;
 //    }
 //
-//    public SymbolTable.Row getRowPointer() {
+//    public SymbolTable.Row.Row getRowPointer() {
 //        return rowPointer;
 //    }
 }
@@ -74,6 +74,14 @@ class RowIndex extends Index {
     private Row row;
 
     public RowIndex(Row row) {
+        this.row = row;
+    }
+
+    public Row getRow() {
+        return row;
+    }
+
+    public void setRow(Row row) {
         this.row = row;
     }
 }

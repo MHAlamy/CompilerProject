@@ -1,5 +1,8 @@
 package SymbolTable;
 
+import SymbolTable.Row.ClassRow;
+import SymbolTable.Row.Row;
+
 import java.util.ArrayList;
 
 /**
@@ -21,7 +24,7 @@ public class MasterSymbolTable extends SymbolTable {
     @Override
     public ClassRow getRow(Row idRow) { //throws Exception {
         ClassRow res;
-//        int rowNum = nonClassRows.indexOf(new SymbolTable.NonClassRow(this, name));
+//        int rowNum = nonClassRows.indexOf(new SymbolTable.Row.NonClassRow(this, name));
         int rowNum = classRows.indexOf(idRow);
 
         if (rowNum >= 0)
@@ -35,7 +38,7 @@ public class MasterSymbolTable extends SymbolTable {
     @Override
     public ClassRow insertRow(Row idRow) {
 //        SymbolTable.ClassSymbolTable classSymbolTable = new SymbolTable.ClassSymbolTable(name, this);
-//        SymbolTable.ClassRow temp = new SymbolTable.ClassRow(this, name, classSymbolTable);
+//        SymbolTable.Row.ClassRow temp = new SymbolTable.Row.ClassRow(this, name, classSymbolTable);
         classRows.add((ClassRow)idRow);
         return (ClassRow)idRow;
     }

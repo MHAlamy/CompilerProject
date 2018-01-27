@@ -1,4 +1,5 @@
-package SymbolTable;
+package SymbolTable.Row;
+import SymbolTable.SymbolTable;
 
 /**
  * Created by mha on 1/27/18.
@@ -31,7 +32,7 @@ NonClassRow extends Row {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.NonClassRow: " + getName() + ", and has type " + type + ". is in table : " + getContainer().getName() + "\n";
+        res += "SymbolTable.Row.NonClassRow: " + getName() + ", and has type " + type + ". is in table : " + getContainer().getName() + "\n";
 
         return res;
     }
