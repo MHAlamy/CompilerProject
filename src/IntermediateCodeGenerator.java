@@ -14,9 +14,9 @@ public class IntermediateCodeGenerator {
     private Parser parser;
     private SymbolTableManager symbolTableManager;
 
-    public IntermediateCodeGenerator(Parser parser, SemanticStack semanticStack) {
+    public IntermediateCodeGenerator(Parser parser, SemanticStack semanticStack, ProgramBlock programBlock) {
         this.parser = parser;
-        programBlock = new ProgramBlock();
+        this.programBlock = programBlock;
         this.semanticStack = semanticStack;
         symbolTableManager = parser.getSymbolTableManager();
     }

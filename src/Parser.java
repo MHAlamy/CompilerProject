@@ -38,13 +38,9 @@ public class Parser {
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
         parseStack = new Stack<Term>();
         semanticStack = new SemanticStack();
-        symbolTableManager = new SymbolTableManager(semanticStack);
-        icg = new IntermediateCodeGenerator(this, semanticStack);
-        // TODO: 1/27/18 fix program block
-
         programBlock = new ProgramBlock();
-//        symbolTableManager.setProgramBlock(new ProgramBlock());
-        symbolTableManager.setProgramBlock(programBlock);
+        symbolTableManager = new SymbolTableManager(semanticStack, programBlock);
+        icg = new IntermediateCodeGenerator(this, semanticStack, programBlock);
 
         completeTerms();
         completeActionSymbols();

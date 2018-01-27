@@ -16,11 +16,12 @@ public class SymbolTableManager {
     private ClassRow lastClassDefinedRow;
     private MethodRow lastDefinedMethodRow;
 
-    public SymbolTableManager(SemanticStack semanticStack) {
+    public SymbolTableManager(SemanticStack semanticStack, ProgramBlock programBlock) {
         masterSymbolTable = new MasterSymbolTable("SymbolTableManager");
         scopeState = ScopeState.DEFAULT;
         currentSymbolTable = masterSymbolTable;
         this.semanticStack = semanticStack;
+        this.programBlock = programBlock;
     }
 
     //TODO: set STM program block
