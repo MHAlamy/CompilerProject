@@ -8,7 +8,8 @@ public class Parser {
     private ArrayList<Rule> rules;
     private HashMap<Pair<Term, Term>, Rule> parseTable;
     private Stack<Term> parseStack;
-    private MasterSymbolTable masterSymbolTable;
+//    private MasterSymbolTable masterSymbolTable;
+    private SymbolTableManager symbolTableManager;
 
     private Scaner scaner; // ???
 
@@ -28,13 +29,15 @@ public class Parser {
         rules = new ArrayList<Rule>();
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
         parseStack = new Stack<Term>();
-        masterSymbolTable = new MasterSymbolTable("MasterSymbolTable");
+//        masterSymbolTable = new MasterSymbolTable("MasterSymbolTable");
+        symbolTableManager = new SymbolTableManager();
 
         completeTerms();
         addRules();
         fillParseTable();
 
-        scaner = new Scaner(masterSymbolTable);
+//        scaner = new Scaner(masterSymbolTable);
+        scaner = new Scaner(symbolTableManager);
 
         parseStack.push(new Terminal("$"));
 //        parseStack.push(new Nonterminal("Goal"));

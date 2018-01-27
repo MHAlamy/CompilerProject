@@ -20,9 +20,9 @@ public abstract class SymbolTable {
         this.name = name;
     }
 
-    public abstract Row getRow(String name);// throws Exception;
+    public abstract Row getRow(Row idRow);// throws Exception;
 
-    public abstract Row insertRow(String name);
+    public abstract Row insertRow(Row idRow);
 
     @Override
     public boolean equals(Object obj) {
@@ -32,19 +32,6 @@ public abstract class SymbolTable {
         }
         return false;
     }
-
-//    @Override
-//    public String toString() {
-//        String res = "";
-//        res += ("Symbol table : " + name + ". Container is = " +
-//                ((container == null) ? ("NULL") : (container.getName())) + "\n-----------------------------------------------\n");
-//        for (Row row :
-//                rows) {
-//            res += row;
-//        }
-//        return res;
-//    }
-
 }
 
 class ClassSymbolTable extends SymbolTable {
@@ -73,25 +60,31 @@ class ClassSymbolTable extends SymbolTable {
     }
 
     @Override
-    public NonClassRow getRow(String name) {
+    public NonClassRow getRow(Row idRow) {
         NonClassRow res;
 
-        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
+//        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
+        int rowNum = nonClassRows.indexOf(idRow); // ???
 
-        if (rowNum >= 0) {
+        if (rowNum >= 0)
             res = nonClassRows.get(rowNum);
-        } else {
+        else
             res = null; // was not found
-        }
 
         return res;
     }
 
     @Override
-    public NonClassRow insertRow(String name) {// TODO: 1/27/18 NEW METHOD OR VARIABLE???
-        NonClassRow temp = new NonClassRow(this, name);
-        nonClassRows.add(temp);
-        return temp;
+    public NonClassRow insertRow(Row idRow) {// TODO: 1/27/18 NEW METHOD OR VARIABLE???
+
+        if (idRow.getClass().equals(VarRow.class))
+            nonClassRows.add((VarRow)idRow);
+        else if (idRow.getClass().equals(MethodRow.class))
+            nonClassRows.add((MethodRow)idRow);
+        else
+            System.out.println("ERROR! Row inserted inside ClassSymbolTable is INVALID");
+
+        return (NonClassRow)idRow;
     }
 
     @Override
@@ -128,25 +121,24 @@ class MethodSymbolTable extends SymbolTable {
     }
 
     @Override
-    public VarRow getRow(String name) {// throws Exception {
-        VarRow res = null;
-        for (VarRow varRow : varRows)
-            if (varRow.getName().equals(name)) {
-                res = varRow;
-                break;
-            }
+    public VarRow getRow(Row idRow) {// throws Exception {
+        VarRow res;
+//        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
+        int rowNum = varRows.indexOf((VarRow)idRow);
 
-//        if (res == null)
-//            throw new Exception("Not Found");
+        if (rowNum >= 0)
+            res = varRows.get(rowNum);
+        else
+            res = null; // was not found
 
         return res;
     }
 
     @Override
-    public VarRow insertRow(String name) {
-        VarRow temp = new VarRow(this, name);
-        varRows.add(temp);
-        return temp;
+    public VarRow insertRow(Row idRow) {
+//        VarRow temp = new VarRow(this, name);
+        varRows.add((VarRow)idRow);
+        return (VarRow)idRow;
     }
 
     @Override
@@ -176,26 +168,25 @@ class MasterSymbolTable extends SymbolTable {
     }
 
     @Override
-    public ClassRow getRow(String name) { //throws Exception {
-        ClassRow res = null;
-        for (ClassRow row : classRows) {
-            if (row.getName().equals(name)) {
-                res = row;
-                break;
-            }
-        }
-//        if (res == null)
-//            throw new Exception("Not found");
+    public ClassRow getRow(Row idRow) { //throws Exception {
+        ClassRow res;
+//        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
+        int rowNum = classRows.indexOf((ClassRow)idRow);
+
+        if (rowNum >= 0)
+            res = classRows.get(rowNum);
+        else
+            res = null; // was not found
 
         return res;
     }
 
     @Override
-    public ClassRow insertRow(String name) {
-        ClassSymbolTable classSymbolTable = new ClassSymbolTable(name, this);
-        ClassRow temp = new ClassRow(this, name, classSymbolTable);
-        classRows.add(temp);
-        return temp;
+    public ClassRow insertRow(Row idRow) {
+//        ClassSymbolTable classSymbolTable = new ClassSymbolTable(name, this);
+//        ClassRow temp = new ClassRow(this, name, classSymbolTable);
+        classRows.add((ClassRow)idRow);
+        return (ClassRow)idRow;
     }
 
     @Override
@@ -217,7 +208,6 @@ abstract class Row {
     public Row(SymbolTable container, String name) {
         this.container = container;
         this.name = name;
-//        attributes = new ArrayList<String>();
     }
 
     public String getName() {
@@ -231,22 +221,11 @@ abstract class Row {
     @Override
     public boolean equals(Object obj) { // CONSIDERS ONLY NAME
         // TODO: 1/27/18 consider only name in method and var rows?
-        return (obj.getClass().equals(this.getClass())) &&
+        //return (obj.getClass().equals(this.getClass())) &&
+        return (Row.class.isAssignableFrom(obj.getClass())) &&
                 (((Row) obj).getName().equals(this.getName())); // may consider type for supporting same names
     }
 
-//    @Override
-//    public String toString() {
-////        return ("ID " + name + " in : " + container);
-//        String res = "";
-//        res += "Row: " + getName() + ", and is " + getType() + ". is in table : " + container.getName() + "\n";
-//        if (target != null) {
-//            res += "\t" + target.toString().replaceAll("\\n", "\n\t");
-//        }
-//        res += "\n";
-//
-//        return res;
-//    }
 }
 
 class ClassRow extends Row {
