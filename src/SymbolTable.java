@@ -26,7 +26,8 @@ public abstract class SymbolTable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.getClass().equals(SymbolTable.class)) {
+//        if (obj.getClass().equals(SymbolTable.class)) {
+        if (SymbolTable.class.isAssignableFrom(obj.getClass())) {
             SymbolTable tmp = (SymbolTable) obj;
             return this.name.equals(tmp.getName());
         }
@@ -124,7 +125,7 @@ class MethodSymbolTable extends SymbolTable {
     public VarRow getRow(Row idRow) {// throws Exception {
         VarRow res;
 //        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
-        int rowNum = varRows.indexOf((VarRow)idRow);
+        int rowNum = varRows.indexOf(idRow);
 
         if (rowNum >= 0)
             res = varRows.get(rowNum);
@@ -171,7 +172,7 @@ class MasterSymbolTable extends SymbolTable {
     public ClassRow getRow(Row idRow) { //throws Exception {
         ClassRow res;
 //        int rowNum = nonClassRows.indexOf(new NonClassRow(this, name));
-        int rowNum = classRows.indexOf((ClassRow)idRow);
+        int rowNum = classRows.indexOf(idRow);
 
         if (rowNum >= 0)
             res = classRows.get(rowNum);

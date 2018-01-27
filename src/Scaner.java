@@ -13,19 +13,7 @@ public class Scaner {
     private int curLine = 1; // for writing error message
     private Token lastToken;
 
-//    private String stState; // classDef, extendsThis, normalDef, useId,
-
-//    private MasterSymbolTable masterSymbolTable;
     private SymbolTableManager symbolTableManager;
-//    private SymbolTable curSymbolTable;
-
-//    public void setSTState(String STState) {
-//        this.stState = STState;
-//    }
-
-//    public void setCurSymbolTable(SymbolTable curSymbolTable) {
-//        this.curSymbolTable = curSymbolTable;
-//    }
 
     public int getCurInputIndex() {
         return curInputIndex;
@@ -35,14 +23,9 @@ public class Scaner {
         return curLine;
     }
 
-//    public Scaner(MasterSymbolTable st) {
     public Scaner(SymbolTableManager stm) {
-//        this.masterSymbolTable = st;
         this.symbolTableManager = stm;
-//        masterSymbolTable.setName("Master Table");
-//        curSymbolTable = st;
 
-//        stState = "";
         readFile();
 
         keywords.addAll(Arrays.asList("EOF", "public", "class", "{", "static", "void", "main", "(", ")", "}",
@@ -324,10 +307,10 @@ public class Scaner {
     }
 
     private Token fixIdToken(String curRead) {
-        System.out.println("Adding ID " + curRead + ". state is : " + stState + "\n");
+        System.out.println("Adding ID " + curRead + ". state is : " + symbolTableManager.getScopeState() + "\n");
 
 
-
+        return new Token("id", new RowIndex(symbolTableManager.getRowIndex(curRead)));
     }
 
     private void readFile() { // reads the file char by char and puts it in input ArrayList

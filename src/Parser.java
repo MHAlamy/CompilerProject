@@ -58,12 +58,9 @@ public class Parser {
             tokenName = nextToken.getName();
 
             if (tokenName.equals("class")) {
-                scaner.setSTState("classDef");
-            }
-            else if (tokenName.equals("extends"))
-                scaner.setSTState("extendsThis");
-            if (tokenName.equals("boolean") || tokenName.equals("int"))
-                scaner.setSTState("normalDef");
+                symbolTableManager.setScopeState(ScopeState.DEFINE_CLASS);
+            } if (tokenName.equals("boolean") || tokenName.equals("int"))
+                symbolTableManager.setScopeState(ScopeState.DEFINE_VAR);
 //            else
 //                scaner.setSTState("useID");
 
