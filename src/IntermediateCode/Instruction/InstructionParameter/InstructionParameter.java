@@ -1,4 +1,6 @@
-package IntermediateCode.Instruction;
+package IntermediateCode.Instruction.InstructionParameter;
+
+import IntermediateCode.Instruction.ParameterType;
 
 /**
  * Created by mha on 1/27/18.

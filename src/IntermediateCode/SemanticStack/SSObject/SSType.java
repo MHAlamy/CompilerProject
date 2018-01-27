@@ -1,4 +1,4 @@
-package IntermediateCode.SemanticStack;
+package IntermediateCode.SemanticStack.SSObject;
 
 /**
  * Created by mha on 1/27/18.

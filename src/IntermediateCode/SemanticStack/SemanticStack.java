@@ -1,5 +1,7 @@
 package IntermediateCode.SemanticStack;
 
+import IntermediateCode.SemanticStack.SSObject.SSObject;
+
 import java.util.Stack;
 
 /**
