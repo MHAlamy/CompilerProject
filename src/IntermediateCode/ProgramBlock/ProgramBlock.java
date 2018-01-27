@@ -32,7 +32,8 @@ public class ProgramBlock {
     }
 
     public void setInstructionAtRow(int rowNumber, Instruction instruction) {
-        ((InstructionPBR)rows.get(rowNumber)).setInstruction(instruction);
+//        ((InstructionPBR)rows.get(rowNumber)).setInstruction(instruction);
+        rows.set(rowNumber, new InstructionPBR(instruction));
     }
 
     public int allocateInteger() {
@@ -48,8 +49,12 @@ public class ProgramBlock {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder();
-        for (int i = 0; rows.get(i) != null; i++) {
-            res.append(i).append(" ").append(((InstructionPBR) rows.get(i)).getInstruction());
+        for (int i = 0; i < 1000; i++) {
+            if (rows.get(i) != null)
+                if (rows.get(i) instanceof InstructionPBR)
+                    res.append(i).append(" ").append(((InstructionPBR) rows.get(i)).getInstruction()).append("\n");
+                else
+                    res.append(i).append(" ").append(((IntegerPBR) rows.get(i)).getValue()).append("\n");
         }
         return res.toString();
     }

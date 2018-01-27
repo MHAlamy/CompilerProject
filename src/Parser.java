@@ -13,6 +13,7 @@ public class Parser {
     private Stack<Term> parseStack;
     private SymbolTableManager symbolTableManager;
     private IntermediateCodeGenerator icg;
+    private ProgramBlock programBlock;
     private SemanticStack semanticStack;
 
     private Scaner scaner; // ???
@@ -29,7 +30,8 @@ public class Parser {
     ntExp, ntExp1, ntExp2, ntRelExp, ntRelTerm, ntTerm, ntTerm1, ntFactor, ntFactor1, ntFactor2, ntArg, ntArgs;
 
     private ActionSymbol setClassFlag, createScopeEntry, unsetClassFlag, getInScope, getOutOfScope,
-        setFieldFlag, unsetFieldFlag, setVarFlag, unsetValFlag, setMethodFlag, unsetMethodFlag;
+        setFieldFlag, unsetFieldFlag, setVarFlag, unsetValFlag, setMethodFlag, unsetMethodFlag, saveMainAddress,
+        setParentClass;
 
     public Parser() {
         rules = new ArrayList<Rule>();
@@ -39,7 +41,10 @@ public class Parser {
         symbolTableManager = new SymbolTableManager(semanticStack);
         icg = new IntermediateCodeGenerator(this, semanticStack);
         // TODO: 1/27/18 fix program block
-        symbolTableManager.setProgramBlock(new ProgramBlock());
+
+        programBlock = new ProgramBlock();
+//        symbolTableManager.setProgramBlock(new ProgramBlock());
+        symbolTableManager.setProgramBlock(programBlock);
 
         completeTerms();
         completeActionSymbols();
@@ -214,6 +219,18 @@ public class Parser {
                             e.printStackTrace();
                         }
                         break;
+                    case "saveMainAddress":
+                        // TODO: 1/28/18
+                        icg.saveMainAddress();
+                        break;
+
+                    case "setParentClass":
+                        try {
+                            icg.setParentClass(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
 
                     case "saveType":
                         try {
@@ -225,6 +242,9 @@ public class Parser {
             }
 
         }
+
+        System.out.println(programBlock);
+
     }
 
     private void completeTerms() { // TODO: 1/25/18 Add follows
@@ -389,6 +409,8 @@ public class Parser {
         unsetValFlag = new ActionSymbol("unsetValFlag");
         setMethodFlag = new ActionSymbol("setMethodFlag");
         unsetMethodFlag = new ActionSymbol("unsetMethodFlag");
+        saveMainAddress = new ActionSymbol("saveMainAddress");
+        setParentClass = new ActionSymbol("setParentClass");
     }
 
     private void addRules() {
@@ -397,10 +419,10 @@ public class Parser {
         rules.add(new Rule(ntSource, new ArrayList<Term>(Arrays.asList(ntClassDecs, ntMainClass)))); // 1
 
         rules.add(new Rule(ntMainClass, new ArrayList<Term>(Arrays.asList(tPublic, setClassFlag, tClass,
-                createScopeEntry, tId, unsetClassFlag, tCurlyBraceOpen, getInScope, setMethodFlag, // ???
-                tPublic, tStatic, tVoid, createScopeEntry, // ???
-                tMain, getInScope, unsetMethodFlag, ///???
-                tParanOpen, tParanClose, tCurlyBraceOpen, getInScope, ntVarDecs, ntStmts, getOutOfScope, // /??
+                createScopeEntry, tId, unsetClassFlag, tCurlyBraceOpen, getInScope, setMethodFlag,
+                tPublic, tStatic, tVoid, createScopeEntry,
+                tMain, getInScope, saveMainAddress, unsetMethodFlag,
+                tParanOpen, tParanClose, tCurlyBraceOpen, getInScope, ntVarDecs, ntStmts, getOutOfScope,
                 tCurlyBraceClose, getOutOfScope, tCurlyBraceClose)))); // 2
 
         rules.add(new Rule(ntClassDecs, new ArrayList<Term>(Arrays.asList(ntClassDec, ntClassDecs)))); // 3
@@ -410,7 +432,7 @@ public class Parser {
                 tId, ntExtension, unsetClassFlag, tCurlyBraceOpen, getInScope, ntFieldDecs, ntMethodDecs,
                 getOutOfScope, tCurlyBraceClose)))); // 5
 
-        rules.add(new Rule(ntExtension, new ArrayList<Term>(Arrays.asList(tExtends, tId)))); // 6
+        rules.add(new Rule(ntExtension, new ArrayList<Term>(Arrays.asList(tExtends, setParentClass, tId)))); // 6
         rules.add(new Rule(ntExtension, new ArrayList<Term>())); // 7
 
         rules.add(new Rule(ntFieldDecs, new ArrayList<Term>(Arrays.asList(ntFieldDec, ntFieldDecs)))); // 8

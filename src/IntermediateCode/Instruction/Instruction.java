@@ -12,7 +12,7 @@ public class Instruction {
                        InstructionParameter ip2,
                        InstructionParameter ip3) {
         this.type = type;
-        parameters = new InstructionParameter[3];
+        parameters = new InstructionParameter[4]; // TODO: 1/28/18 siez?
         parameters[1] = ip1;
         parameters[2] = ip2;
         parameters[3] = ip3;

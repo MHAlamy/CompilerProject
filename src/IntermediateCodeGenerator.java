@@ -22,7 +22,6 @@ public class IntermediateCodeGenerator {
     }
 
     public void setClassFlag() {
-        System.out.println("jfiesoogejiejof");
         parser.getSymbolTableManager().setScopeState(ScopeState.DEFINE_CLASS);
     }
 
@@ -63,7 +62,6 @@ public class IntermediateCodeGenerator {
     }
 
     public void getInScope() throws Exception {
-//        System.out.println("GETINSIDE");
         symbolTableManager.getInScope();
     }
 
@@ -96,6 +94,8 @@ public class IntermediateCodeGenerator {
 
         ClassRow childClassRow = symbolTableManager.getLastClassDefinedRow();
         childClassRow.getClassSymbolTable().setParentClass(fatherClassRow.getClassSymbolTable());
+
+//        System.out.println(childClassRow.getName() + " IS CHILD OF " + fatherClassRow.getName());
     }
 
     public void saveType(Token nextToken) throws Exception {
