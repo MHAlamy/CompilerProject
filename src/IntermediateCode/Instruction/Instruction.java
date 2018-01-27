@@ -1,5 +1,7 @@
 package IntermediateCode.Instruction;
 
+import IntermediateCode.Instruction.InstructionParameter.InstructionParameter;
+
 public class Instruction {
 
     private InstructionType type;
@@ -24,8 +26,4 @@ public class Instruction {
     public String toString() {
         return null;
     }
-}
-
-enum InstructionType {
-    ADD, SUB, AND, ASSIGN, EQ, JPF, JP, LT, MULT, NOT, PRINT
 }

@@ -1,22 +1,22 @@
-package IntermediateCode.SemanticStack.SSObject;
+package IntermediateCode.SemanticStack.Object;
 
 /**
  * Created by mha on 1/27/18.
  */
 public class BooleanSSObject extends SSObject {
 
-    private boolean value;
+    private int value;
 
-    public BooleanSSObject(SSType type, boolean value) {
+    public BooleanSSObject(SSType type, int value) {
         super(type);
         this.value = value;
     }
 
-    public boolean isValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(boolean value) {
+    public void setValue(int value) {
         this.value = value;
     }
 

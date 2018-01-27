@@ -294,7 +294,7 @@ public class Scaner {
 //            nextToken = new Token("identifier", 0);
 //            nextToken = new Token(curRead, 0);
 //            nextToken = new Token("id", new Index());
-            nextToken = fixIdToken(curRead);
+            nextToken = createIdToken(curRead);
 
             // TODO: 1/22/18 how to return this ST's info?
             // TODO: 1/21/18 fix index in symbol table
@@ -306,7 +306,7 @@ public class Scaner {
         return nextToken;
     }
 
-    private Token fixIdToken(String curRead) {
+    private Token createIdToken(String curRead) {
         System.out.println("Adding ID " + curRead + ". state is : " + symbolTableManager.getScopeState() + "\n");
 
 

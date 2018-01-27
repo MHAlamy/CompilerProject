@@ -8,7 +8,7 @@ public class Parser {
     private ArrayList<Rule> rules;
     private HashMap<Pair<Term, Term>, Rule> parseTable;
     private Stack<Term> parseStack;
-//    private MasterSymbolTable masterSymbolTable;
+//    private SymbolTable.MasterSymbolTable masterSymbolTable;
     private SymbolTableManager symbolTableManager;
 
     private Scaner scaner; // ???
@@ -29,7 +29,7 @@ public class Parser {
         rules = new ArrayList<Rule>();
         parseTable = new HashMap<Pair<Term, Term>, Rule>();
         parseStack = new Stack<Term>();
-//        masterSymbolTable = new MasterSymbolTable("MasterSymbolTable");
+//        masterSymbolTable = new SymbolTable.MasterSymbolTable("SymbolTable.MasterSymbolTable");
         symbolTableManager = new SymbolTableManager();
 
         completeTerms();
@@ -191,7 +191,7 @@ public class Parser {
         ntFieldDecs = new Nonterminal("FieldDecs");
         ntFieldDec = new Nonterminal("FieldDec");
         ntMethodDecs = new Nonterminal("MethodDecs");
-        ntType = new Nonterminal("Type");
+        ntType = new Nonterminal("SymbolTable.Type");
         ntVarDec = new Nonterminal("VarDec");
         ntMethodDec = new Nonterminal("MethodDec");
         ntPrmts = new Nonterminal("Prmts");

@@ -1,7 +1,5 @@
 package IntermediateCode.Instruction.InstructionParameter;
 
-import IntermediateCode.Instruction.ParameterType;
-
 public class InstructionParameter {
 
     private ParameterType type;
@@ -47,6 +45,3 @@ public class InstructionParameter {
     }
 }
 
-enum ParameterType {
-    ADDRESS, INDIRECT, INTEGER, BOOLEAN
-}

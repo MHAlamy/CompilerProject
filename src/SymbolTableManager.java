@@ -1,8 +1,12 @@
+import IntermediateCode.ProgramBlock.ProgramBlock;
+import SymbolTable.*;
+
 public class SymbolTableManager {
 
     private MasterSymbolTable masterSymbolTable;
     private ScopeState scopeState;
     private SymbolTable currentSymbolTable;
+    private ProgramBlock programBlock;
 
     public SymbolTableManager() {
         masterSymbolTable = new MasterSymbolTable("SymbolTableManager");
@@ -11,7 +15,17 @@ public class SymbolTableManager {
 
     }
 
-    public Row findRow (String name) {
+    //TODO: set STM program block
+
+    public ProgramBlock getProgramBlock() {
+        return programBlock;
+    }
+
+    public void setProgramBlock(ProgramBlock programBlock) {
+        this.programBlock = programBlock;
+    }
+
+    public Row findRowInCurrentSymbolTable(String name) {
         Row tmpRow;
         ClassSymbolTable classSymbolTable;
 
@@ -53,6 +67,7 @@ public class SymbolTableManager {
     public Row declareRow (String name) {
         Row tmpRow;
         ClassSymbolTable classSymbolTable;
+        int address;
 
         switch (scopeState) {
             case DEFINE_CLASS:
@@ -63,14 +78,20 @@ public class SymbolTableManager {
 
             case DEFINE_FIELD:
                 tmpRow = new VarRow(currentSymbolTable, name); // ???
+                address = programBlock.allocateInteger();
+                ((VarRow)tmpRow).setAddress(address);
                 return currentSymbolTable.insertRow(tmpRow);
 
             case DEFINE_METHOD:
                 tmpRow = new MethodRow(currentSymbolTable, name); // ???
+                address = programBlock.getCurrentRow();
+                ((MethodRow)tmpRow).setAddress(address);
                 return currentSymbolTable.insertRow(tmpRow);
 
             case DEFINE_VAR:
                 tmpRow = new VarRow(currentSymbolTable, name); // ???
+                address = programBlock.allocateInteger();
+                ((VarRow)tmpRow).setAddress(address);
                 return currentSymbolTable.insertRow(tmpRow);
 
             default: // USING UNDEFINED ID! ERROR!!!!
@@ -80,45 +101,25 @@ public class SymbolTableManager {
     }
 
 
-    public Row getRowIndex(String curRead) {
+    public Row getRowIndex(String name) {
         Row res;
 
-
         if (scopeState.equals(ScopeState.DEFINE_CLASS)) {
-            Row foundRow = findRow(curRead);
+            Row foundRow = findRowInCurrentSymbolTable(name);
 
             if (foundRow == null) { // ok, add new class
-                foundRow = declareRow(curRead);
-//                tmpClassRow.getTarget().setName(curRead); // DOES NEED NAME?
-//                setCurSymbolTable(foundRow.getClassSymbolTable()); // ??????
+                foundRow = declareRow(name);
+                //TODO: scope in here
                 currentSymbolTable = ((ClassRow)foundRow).getClassSymbolTable();
-
-//                res = new Token("id", new RowIndex(foundRow));
                 res = foundRow;
-                // TODO: 1/26/18 change table???
             } else { // error, return found class??
-//                System.out.println("Error at line " +  + ". Class " + curRead +
-                System.out.println("Error. Class " + curRead +
+                //TODO: extension is in define_class state or not
+                System.out.println("Error. Class " + name +
                         " was already defined. this input will be counted as old class'");
-//                res = new Token("id", new RowIndex(foundRow));
                 res = foundRow;
             }
         }
-//        else if (scopeState.equals("extendsThis")) {
-//            ClassRow foundRow = masterSymbolTable.getRow(curRead);
-//
-//            if (foundRow == null) { // error
-//                System.out.println("Extended class " + curRead + " does not exist!");
-//                res = null;
-////                return new Token("id", foundRow);
-//            } else { // return old defined class, set container of last one
-//                if (curSymbolTable.getClass().equals(ClassSymbolTable.class))
-//                    ((ClassSymbolTable)curSymbolTable).setParentClass(foundRow.getClassSymbolTable());
-//
-//                res = new Token("id", new RowIndex(foundRow));
-//            }
-//
-//        }
+
         else {
             SymbolTable backupSymbolTable = currentSymbolTable;
             boolean wasFound = false;
@@ -126,20 +127,19 @@ public class SymbolTableManager {
             Row foundRow = null;
 
             while (currentSymbolTable != null) {
-//                foundRow = tmpST.getRow(curRead);
-                foundRow = findRow(curRead);
-//                index = tmpST.getRow(curRead);
-
+                foundRow = findRowInCurrentSymbolTable(name);
 
                 if (foundRow != null) { // was found
                     wasFound = true;
                     break;
                 } else {
                     try {
-                        if (currentSymbolTable.getClass().equals(MethodSymbolTable.class)) {
-                            currentSymbolTable = ((MethodSymbolTable) currentSymbolTable).getContainerClass();
+                        if (currentSymbolTable instanceof MethodSymbolTable) {
+                            currentSymbolTable = ((MethodSymbolTable) currentSymbolTable)
+                                    .getContainerClass();
                         } else { // it's class symbol table
-                            currentSymbolTable = ((ClassSymbolTable) currentSymbolTable).getParentClass();
+                            currentSymbolTable = ((ClassSymbolTable) currentSymbolTable)
+                                    .getParentClass();
                         }
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
@@ -153,22 +153,21 @@ public class SymbolTableManager {
                     case DEFINE_VAR:
                     case DEFINE_METHOD:
                         if (currentSymbolTable.equals(backupSymbolTable)) {
-                            System.out.println("Variable/Function " + curRead + " is already in this scope." +
+                            System.out.println("Variable/Function " + name + " is already in this scope." +
                                     " this declaration will be ignored");
                             // TODO: 1/26/18 what to do if ID is for function?
 
-//                            res = new Token("id", new RowIndex(foundRow));
                             res = foundRow;
                         } else {
                             currentSymbolTable = backupSymbolTable;
-                            res = declareRow(curRead);
+                            res = declareRow(name);
                             // details about symbolRow can be set later?
                         }
                         break;
 
                     default:
                         res = foundRow;
-                        System.out.println("ACCESSED " + curRead + ", inside " + foundRow.getContainer().getName() + "\n");
+                        System.out.println("ACCESSED " + name + ", inside " + foundRow.getContainer().getName() + "\n");
                         break;
 
                 }
@@ -178,28 +177,26 @@ public class SymbolTableManager {
                     case DEFINE_VAR:
                     case DEFINE_METHOD:
                         currentSymbolTable = backupSymbolTable;
-                        res = declareRow(curRead);
+                        res = declareRow(name);
                         break;
 
                     default:
-                        System.out.println("Variable/Function " + curRead + " is not defined in this scope");
+                        System.out.println("Variable/Function " + name + " is not defined in this scope");
                         // TODO: 1/26/18 error handling??
                         res = null;
                         break;
 
                 }
 
-//                index = curSymbolTable.insertRow(curRead);
-//                return new Token("id", index);
             }
             currentSymbolTable = backupSymbolTable;
         }
         scopeState = ScopeState.DEFAULT;
 
-//        System.out.println("Symbol Table Result: ");
         System.out.println(masterSymbolTable + "\n\n");
         return res;
     }
+
     public void setScopeState(ScopeState scopeState) {
         this.scopeState = scopeState;
     }

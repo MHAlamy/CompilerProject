@@ -1,3 +1,5 @@
+import SymbolTable.Row;
+
 public class Token {
     private String name;
     private Index index;
@@ -28,21 +30,21 @@ public class Token {
 class Index {
 //    private boolean isInt;
 //    private int value; // only if isInt
-//    private Row rowPointer; // otherwise, if is ID
+//    private SymbolTable.Row rowPointer; // otherwise, if is ID
 
 //    public Index(int value) {
 //        isInt = true;
 //        this.value = value;
 //    }
 //
-//    public Index(Row rowPointer) {
+//    public Index(SymbolTable.Row rowPointer) {
 //        isInt = false;
 //        this.rowPointer = rowPointer;
 //    }
     public Index() {
 
     }
-//    public void setRowPointer(Row rowPointer) {
+//    public void setRowPointer(SymbolTable.Row rowPointer) {
 //        this.rowPointer = rowPointer;
 //    }
 //
@@ -54,7 +56,7 @@ class Index {
 //        return value;
 //    }
 //
-//    public Row getRowPointer() {
+//    public SymbolTable.Row getRowPointer() {
 //        return rowPointer;
 //    }
 }
