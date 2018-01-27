@@ -1,8 +1,5 @@
 package IntermediateCode.Instruction;
 
-/**
- * Created by mha on 1/27/18.
- */
 public class InstructionParameter {
 
     private ParameterType type;
@@ -46,4 +43,8 @@ public class InstructionParameter {
         }
         return res;
     }
+}
+
+enum ParameterType {
+    ADDRESS, INDIRECT, INTEGER, BOOLEAN
 }

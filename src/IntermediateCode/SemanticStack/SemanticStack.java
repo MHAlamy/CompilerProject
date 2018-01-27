@@ -2,9 +2,6 @@ package IntermediateCode.SemanticStack;
 
 import java.util.Stack;
 
-/**
- * Created by mha on 1/27/18.
- */
 public class SemanticStack extends Stack<SSObject> {
 
     public SemanticStack() {

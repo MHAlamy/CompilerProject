@@ -1,10 +1,5 @@
 package IntermediateCode.Instruction;
 
-import java.util.Arrays;
-
-/**
- * Created by mha on 1/27/18.
- */
 public class Instruction {
 
     private InstructionType type;

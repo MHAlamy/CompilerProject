@@ -1,8 +1,5 @@
 package IntermediateCode.SemanticStack;
 
-/**
- * Created by mha on 1/27/18.
- */
 public abstract class SSObject {
 
     private SSType type;
@@ -75,4 +72,8 @@ class StringSSObject extends SSObject {
     public void setValue(String value) {
         this.value = value;
     }
+}
+
+enum SSType {
+    ADDRESS, INTEGER, BOOLEAN, STRING
 }
