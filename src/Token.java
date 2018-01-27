@@ -64,6 +64,6 @@ class RowIndex extends Index {
 
     @Override
     public String toString() {
-        return row.getName().toString();
+        return (row == null) ? "NULL row" : row.getName();
     }
 }

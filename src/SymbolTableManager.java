@@ -196,7 +196,7 @@ public class SymbolTableManager {
         }
         scopeState = ScopeState.DEFAULT;
 
-        System.out.println("FOUND ROW " + res.getName());
+//        System.out.println("FOUND ROW " + res.getName());
         System.out.println(masterSymbolTable + "\n\n");
         return res;
     }
