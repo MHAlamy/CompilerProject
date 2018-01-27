@@ -24,6 +24,6 @@ public class Instruction {
 
     @Override
     public String toString() {
-        return null;
+        return "(" + type + ", " + parameters[0] + ", " + parameters[1] + ", " + parameters[2] + ")";
     }
 }

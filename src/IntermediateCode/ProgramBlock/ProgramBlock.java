@@ -44,4 +44,13 @@ public class ProgramBlock {
     public int getCurrentRow() {
         return currentRow;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; rows.get(i) != null; i++) {
+            res.append(i).append(" ").append(((InstructionPBR) rows.get(i)).getInstruction());
+        }
+        return res.toString();
+    }
 }
