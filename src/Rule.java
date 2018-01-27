@@ -103,4 +103,9 @@ class ActionSymbol extends Term{
     public void setFunctionName(String functionName) {
         this.functionName = functionName;
     }
+
+    @Override
+    public String toString() {
+        return "\"" + functionName + "\"";
+    }
 }

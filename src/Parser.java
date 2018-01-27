@@ -40,6 +40,7 @@ public class Parser {
         symbolTableManager.setProgramBlock(new ProgramBlock());
 
         completeTerms();
+        completeActionSymbols();
         addRules();
         fillParseTable();
 
@@ -58,6 +59,7 @@ public class Parser {
         Pair keyPair;
         Rule targetRule;
 
+
         while (!parseStack.peek().equals(new Terminal("$")) &&
                 nextToken != null) {
 
@@ -72,9 +74,9 @@ public class Parser {
 //                scaner.setSTState("useID");
 
 
-//            System.out.println("Parse Stack = " + parseStack);
-//            System.out.println("Next Token = " + nextToken);
-//            System.out.println("=====================================================================================");
+            System.out.println("Parse Stack = " + parseStack);
+            System.out.println("Next Token = " + nextToken);
+            System.out.println("=====================================================================================");
 
 //            try {
 //                Thread.sleep(200);
@@ -142,6 +144,8 @@ public class Parser {
 
 
             } else {
+//                System.out.println("ELSEEEEEE");
+                parseStack.pop();
                 nextToken = scaner.getNextToken();
                 ActionSymbol as = (ActionSymbol)top;
                 switch (as.getFunctionName()) {

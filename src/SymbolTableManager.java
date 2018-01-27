@@ -216,6 +216,7 @@ public class SymbolTableManager {
             destination = ((MethodRow) scopeEntryRow).getMethodSymbolTable();
         else
             throw new Exception("Scope Entry corrupted");
+
         currentSymbolTable = destination;
     }
 

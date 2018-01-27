@@ -49,6 +49,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void getInScope() throws Exception {
+        System.out.println("GETINSIDE");
         symbolTableManager.getInScope();
     }
 
@@ -61,7 +62,9 @@ public class IntermediateCodeGenerator {
         if (nextToken.getIndex() instanceof RowIndex)
             entry = ((RowIndex) nextToken.getIndex()).getRow();
         else
-            throw new Exception("entry row not found!");
+            System.out.println("NOTMATCH" + nextToken.getIndex().getClass());
+//            throw new Exception("entry row not found!");
+
         symbolTableManager.setScopeEntryRow(entry);
     }
 
