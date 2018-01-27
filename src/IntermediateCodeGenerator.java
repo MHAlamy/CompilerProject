@@ -1,6 +1,10 @@
+import IntermediateCode.Instruction.Instruction;
+import IntermediateCode.Instruction.InstructionParameter.IntegerIP;
+import IntermediateCode.Instruction.InstructionType;
 import IntermediateCode.ProgramBlock.ProgramBlock;
 import IntermediateCode.SemanticStack.SemanticStack;
 import SymbolTable.Row.Row;
+import SymbolTable.Row.ClassRow;
 
 public class IntermediateCodeGenerator {
 
@@ -8,6 +12,8 @@ public class IntermediateCodeGenerator {
     private SemanticStack semanticStack;
     private Parser parser;
     private SymbolTableManager symbolTableManager;
+
+    private ClassRow lastClassDefinedRow;
 
     public IntermediateCodeGenerator(Parser parser) {
         this.parser = parser;
@@ -59,15 +65,32 @@ public class IntermediateCodeGenerator {
     }
 
     public void createScopeEntry(Token nextToken) throws Exception {
-//        System.out.println("creating jiji");
         Row entry = null;
-        if (nextToken.getIndex() instanceof RowIndex)
+        if (nextToken.getIndex() instanceof RowIndex) {
             entry = ((RowIndex) nextToken.getIndex()).getRow();
+            if (entry instanceof ClassRow)
+                lastClassDefinedRow = (ClassRow) entry;
+        }
         else
-//            System.out.println("NOTMATCH" + nextToken.getIndex().getClass());
             throw new Exception("entry row not found!");
 
         symbolTableManager.setScopeEntryRow(entry);
+    }
+
+    public void saveMainAddress() {
+        Instruction temp = new Instruction(InstructionType.JP, new IntegerIP(programBlock.getCurrentRow()), null, null);
+        programBlock.setInstructionAtRow(0, temp);
+    }
+
+    public void setParentClass(Token nextToken) throws Exception {
+        ClassRow fatherClassRow = null;
+        if (nextToken.getIndex() instanceof RowIndex) {
+            fatherClassRow = (ClassRow) ((RowIndex) nextToken.getIndex()).getRow();
+        } else
+            throw new Exception("entry row not found!");
+
+        ClassRow childClassRow = lastClassDefinedRow;
+        childClassRow.getClassSymbolTable().setParentClass(fatherClassRow.getClassSymbolTable());
     }
 
 }

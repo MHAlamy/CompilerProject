@@ -1,5 +1,7 @@
 package IntermediateCode.ProgramBlock;
 
+import IntermediateCode.Instruction.Instruction;
+
 import java.util.ArrayList;
 
 public class ProgramBlock {
@@ -9,7 +11,7 @@ public class ProgramBlock {
     private ArrayList<ProgramBlockRow> rows;
 
     public ProgramBlock() {
-        currentRow = 0;
+        currentRow = 1;
         currentAllocRow = 500;
         rows = new ArrayList<>(1000);
         for (int i = 0; i < 1000; i++) {
@@ -27,6 +29,10 @@ public class ProgramBlock {
         if (rows.get(rowNumber) instanceof InstructionPBR)
             throw new Exception("Wrong PBR type.");
         ((IntegerPBR)rows.get(rowNumber)).setValue(value);
+    }
+
+    public void setInstructionAtRow(int rowNumber, Instruction instruction) {
+        ((InstructionPBR)rows.get(rowNumber)).setInstruction(instruction);
     }
 
     public int allocateInteger() {
