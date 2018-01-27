@@ -1,6 +1,4 @@
-package SymbolTable.Row;
-
-import SymbolTable.SymbolTable;
+package SymbolTable;
 
 /**
  * Created by mha on 1/27/18.
@@ -13,7 +11,8 @@ public class VarRow extends NonClassRow {
     @Override
     public String toString() {
         String res = "";
-        res += "SymbolTable.Row.VarRow: " + getName() + ", and has type " + getType() + ". is in table : " + getContainer().getName() + "\n";
+        res += "SymbolTable.VarRow: " + getName() + ", and has type " + getType() + ". is in table : " +
+                getContainer().getName() + " and address " + getAddress() + "\n";
 
         return res;
     }
