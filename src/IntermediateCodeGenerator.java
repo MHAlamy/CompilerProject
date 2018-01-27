@@ -104,6 +104,8 @@ public class IntermediateCodeGenerator {
             semanticStack.push(new StringSSObject(tokenName));
         else
             throw new Exception("Token is not type");
+
+        System.out.println("IS SAVING " + semanticStack.size());
     }
 
 }

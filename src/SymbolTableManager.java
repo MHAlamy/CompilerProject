@@ -136,17 +136,20 @@ public class SymbolTableManager {
                 lastDefinedMethodRow = (MethodRow) tmpRow;
 
                 //Finding type
-                if (semanticStack.peek() instanceof StringSSObject) {
-                    typeString = ((StringSSObject) semanticStack.pop()).getValue();
-                    if (typeString.equals("boolean"))
-                        type = RowType.BOOL;
-                    else
-                        type = RowType.INT;
-                    ((NonClassRow) tmpRow).setRowType(type);
-                }
-                else
-                    System.out.println("********Type not found for method declaration******");
+                if (name.equals("main")) {
+                    // TODO: 1/28/18 def type or not?
+                } else {
 
+                    if (semanticStack.peek() instanceof StringSSObject) {
+                        typeString = ((StringSSObject) semanticStack.pop()).getValue();
+                        if (typeString.equals("boolean"))
+                            type = RowType.BOOL;
+                        else
+                            type = RowType.INT;
+                        ((NonClassRow) tmpRow).setRowType(type);
+                    } else
+                        System.out.println("********Type not found for method declaration******");
+                }
                 return currentSymbolTable.insertRow(tmpRow);
 
             default: // USING UNDEFINED ID! ERROR!!!!
@@ -164,8 +167,6 @@ public class SymbolTableManager {
 
             if (foundRow == null) { // ok, add new class
                 foundRow = declareRow(name);
-                //TODO: scope in here
-//                currentSymbolTable = ((ClassRow)foundRow).getClassSymbolTable();
                 res = foundRow;
             } else { // error, return found class??
                 //TODO: extension is in define_class state or not
