@@ -89,7 +89,7 @@ public class SymbolTableManager {
 
 
             if (foundRow == null) { // ok, add new class
-                foundRow = masterSymbolTable.insertRow(curRead);
+                foundRow = (ClassRow)masterSymbolTable.insertRow(curRead);
 
 //                tmpClassRow.getTarget().setName(curRead); // DOES NEED NAME?
                 setCurSymbolTable(foundRow.getClassSymbolTable());

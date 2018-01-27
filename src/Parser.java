@@ -57,21 +57,19 @@ public class Parser {
             Term top = parseStack.peek();
             tokenName = nextToken.getName();
 
-            if (tokenName.equals("class")) {
-                scaner.setSTState("classDef");
-            }
-            else if (tokenName.equals("extends"))
-                scaner.setSTState("extendsThis");
-            if (tokenName.equals("boolean") || tokenName.equals("int"))
-                scaner.setSTState("normalDef");
-//            else
-//                scaner.setSTState("useID");
+            /* Former code for changing scope */
+//            if (tokenName.equals("class")) {
+//                scaner.setSTState("classDef");
+//            }
+//            else if (tokenName.equals("extends"))
+//                scaner.setSTState("extendsThis");
+//            if (tokenName.equals("boolean") || tokenName.equals("int"))
+//                scaner.setSTState("normalDef");
 
-
+            /* Former code for debugging */
 //            System.out.println("Parse Stack = " + parseStack);
 //            System.out.println("Next Token = " + nextToken);
 //            System.out.println("=====================================================================================");
-
 //            try {
 //                Thread.sleep(200);
 //            } catch (Exception e) {
@@ -79,11 +77,11 @@ public class Parser {
 //            }
 
 
-            if (top.getClass().equals(Symbol.class) || top.getClass().equals(Terminal.class) ||
-                    top.getClass().equals(Nonterminal.class)) { // stack top is not a action symbol
+            if (top.getClass().equals(Symbol.class) ||
+                top.getClass().equals(Terminal.class) ||
+                top.getClass().equals(Nonterminal.class)) { // stack top is not a action symbol
 
                 if (((Symbol)top).isTerminal()) { // check if two symbols are the same
-//                    System.out.println("is terminal");
                     if (tokenName.equals(((Symbol)top).getValue())) { // remove both
                         parseStack.pop();
                         nextToken = scaner.getNextToken();
@@ -138,7 +136,9 @@ public class Parser {
 
 
             } else { // top is ActionSymbol
-                // TODO: 1/25/18 Intermediate code and symbol table
+                ActionSymbol actionSymbol = (ActionSymbol)top;
+                nextToken = scaner.getNextToken();
+
             }
 
         }
