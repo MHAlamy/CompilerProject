@@ -37,6 +37,10 @@ class Index {
 class ValueIndex extends Index {
     private int value;
 
+    public int getValue() {
+        return value;
+    }
+
     public ValueIndex(int value) {
         this.value = value;
     }

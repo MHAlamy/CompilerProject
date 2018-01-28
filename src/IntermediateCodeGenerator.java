@@ -4,10 +4,7 @@ import IntermediateCode.Instruction.InstructionParameter.IntegerIP;
 import IntermediateCode.Instruction.InstructionParameter.ParameterType;
 import IntermediateCode.Instruction.InstructionType;
 import IntermediateCode.ProgramBlock.ProgramBlock;
-import IntermediateCode.SemanticStack.Object.AddressSSObject;
-import IntermediateCode.SemanticStack.Object.IntegerSSObject;
-import IntermediateCode.SemanticStack.Object.RowSSObject;
-import IntermediateCode.SemanticStack.Object.StringSSObject;
+import IntermediateCode.SemanticStack.Object.*;
 import IntermediateCode.SemanticStack.SemanticStack;
 import SymbolTable.Row.Row;
 import SymbolTable.Row.ClassRow;
@@ -129,6 +126,16 @@ public class IntermediateCodeGenerator {
         semanticStack.push(new AddressSSObject(address));
     }
 
+    public void pushInteger(Token nextToken) throws Exception {
+        int value;
+        Index tempIndex = nextToken.getIndex();
+        if (tempIndex instanceof ValueIndex) {
+            value = ((ValueIndex)tempIndex).getValue();
+        } else
+            throw new Exception("Expected to see value index");
+        semanticStack.push(new IntegerSSObject(value));
+    }
+
     public void add() throws Exception {
         Instruction instruction = new Instruction(InstructionType.ADD);
 
@@ -177,6 +184,47 @@ public class IntermediateCodeGenerator {
             throw new Exception("Expected to see address");
 
         programBlock.addInstruction(instruction);
+    }
+
+    public void whileSaveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+    }
+
+    public void whileReserveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+        programBlock.incrementCurrentRow();
+    }
+
+    public void whileFill() {
+        Instruction jpf = new Instruction(InstructionType.JPF);
+        int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
+        jpf.setIp(0, getIPFromSS());
+        jpf.setIp(1, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()+1));
+        programBlock.setInstructionAtRow(pbRow, jpf);
+
+        Instruction jp = new Instruction(InstructionType.JP);
+        jp.setIp(0, getIPFromSS());
+        programBlock.addInstruction(jp);
+    }
+
+    public void ifReserveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+        programBlock.incrementCurrentRow();
+    }
+
+    private InstructionParameter getIPFromSS() {
+        if (semanticStack.peek() instanceof IntegerSSObject) {
+            int value = ((IntegerSSObject)semanticStack.pop()).getValue();
+            return new InstructionParameter(ParameterType.INTEGER, value);
+        }
+        if (semanticStack.peek() instanceof AddressSSObject) {
+            int value = ((AddressSSObject)semanticStack.pop()).getValue();
+            return new InstructionParameter(ParameterType.ADDRESS, value);
+        }
+        if (semanticStack.peek() instanceof BooleanSSObject) {
+            int value = ((BooleanSSObject)semanticStack.pop()).getValue();
+            return new InstructionParameter(ParameterType.BOOLEAN, value);
+        }
     }
 
 //    public void pushRow1(Token nextToken) throws Exception {

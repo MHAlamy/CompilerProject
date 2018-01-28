@@ -51,6 +51,10 @@ public class ProgramBlock {
         return currentRow;
     }
 
+    public void incrementCurrentRow() {
+        currentRow++;
+    }
+
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder();

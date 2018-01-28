@@ -7,8 +7,8 @@ public class IntegerSSObject extends SSObject {
 
     private int value;
 
-    public IntegerSSObject(SSType type, int value) {
-        super(type);
+    public IntegerSSObject(int value) {
+        super(SSType.INTEGER);
         this.value = value;
     }
 

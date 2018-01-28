@@ -17,9 +17,9 @@ public class Instruction {
                        InstructionParameter ip3) {
         this.type = type;
         parameters = new InstructionParameter[4]; // TODO: 1/28/18 siez?
-        parameters[1] = ip1;
-        parameters[2] = ip2;
-        parameters[3] = ip3;
+        parameters[0] = ip1;
+        parameters[1] = ip2;
+        parameters[2] = ip3;
     }
 
     public InstructionType getType() {
