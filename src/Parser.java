@@ -31,7 +31,8 @@ public class Parser {
 
     private ActionSymbol setClassFlag, createScopeEntry, unsetClassFlag, getInScope, getOutOfScope,
         setFieldFlag, unsetFieldFlag, setVarFlag, unsetValFlag, setMethodFlag, unsetMethodFlag, saveMainAddress,
-        setParentClass, saveType, setParFlag, unsetParFlag, pushSimpleId, assign, add;
+        setParentClass, saveType, setParFlag, unsetParFlag, pushSimpleId, assign, add, pushInteger, whileSaveHere,
+        whileReserveHere, whileFill, ifReserveHere, ifFillJpf, ifFillJp, pushBoolean;
 
     public Parser() {
         rules = new ArrayList<Rule>();
@@ -258,6 +259,69 @@ public class Parser {
                             e.printStackTrace();
                         }
                         break;
+
+                    case "pushInteger":
+                        try {
+                            icg.pushInteger(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "pushBoolean":
+                        try {
+                            icg.pushBoolean(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case "whileSaveHere":
+                        try {
+                            icg.whileSaveHere();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "whileReserveHere":
+                        try {
+                            icg.whileReserveHere();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "whileFill":
+                        try {
+                            icg.whileFill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "ifReserveHere":
+                        try {
+                            icg.ifReserveHere();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "ifFillJpf":
+                        try {
+                            icg.ifFillJpf();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "ifFillJp":
+                        try {
+                            icg.ifFillJp();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
                 }
             }
 
@@ -440,6 +504,17 @@ public class Parser {
         pushSimpleId = new ActionSymbol("pushSimpleId");
         assign = new ActionSymbol("assign");
         add = new ActionSymbol("add");
+
+        pushInteger = new ActionSymbol("pushInteger");
+        whileSaveHere = new ActionSymbol("whileSaveHere");
+        whileReserveHere = new ActionSymbol("whileReserveHere");
+        whileFill = new ActionSymbol("whileFill");
+
+        ifReserveHere = new ActionSymbol("ifReserveHere");
+        ifFillJpf = new ActionSymbol("ifFillJpf");
+        ifFillJp = new ActionSymbol("ifFillJp");
+
+        pushBoolean = new ActionSymbol("pushBoolean");
     }
 
     private void addRules() {
@@ -503,8 +578,8 @@ public class Parser {
         rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(tCurlyBraceOpen, ntStmts, tCurlyBraceClose)))); // 25
         rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(tIf, tParanOpen, ntGenExp, tParanClose, ntStmt,
                 tElse, ntStmt)))); // 26
-        rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(tWhile, tParanOpen, ntGenExp,
-                tParanClose, ntStmt)))); // 27
+        rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(tWhile, whileSaveHere, tParanOpen, ntGenExp,
+                tParanClose, whileReserveHere, ntStmt, whileFill)))); // 27 ???
         rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(tFor, tParanOpen, tId, tEqual, tInteger,
                 tSemiColon, ntExp, ntRelTerm, tSemiColon, tId, tPlusEqual, tInteger, tParanClose, ntStmt)))); // 28
         rules.add(new Rule(ntStmt, new ArrayList<Term>(Arrays.asList(pushSimpleId, tId, tEqual, ntGenExp,
@@ -538,9 +613,9 @@ public class Parser {
 
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(tParanOpen, ntExp, tParanClose)))); // 46
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushSimpleId, tId, ntFactor1)))); // 47 ???
-        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(tTrue)))); // 48
-        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(tFalse)))); // 49
-        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(tInteger)))); // 50
+        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushBoolean, tTrue)))); // 48
+        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushBoolean, tFalse)))); // 49
+        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushInteger, tInteger)))); // 50 ???
 
         rules.add(new Rule(ntFactor1, new ArrayList<Term>(Arrays.asList(tDot, tId, ntFactor2)))); // 51
         rules.add(new Rule(ntFactor1, new ArrayList<Term>())); // 52

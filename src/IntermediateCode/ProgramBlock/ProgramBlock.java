@@ -61,10 +61,11 @@ public class ProgramBlock {
         for (int i = 0; i < 1000; i++) {
             if (rows.get(i) != null)
                 if (rows.get(i) instanceof InstructionPBR)
-                    res.append(i).append(" ").append(((InstructionPBR) rows.get(i)).getInstruction()).append("\n");
+                    res.append(i).append("\t").append(((InstructionPBR) rows.get(i)).getInstruction()).append("\n");
                 else
-                    res.append(i).append(" ").append(((IntegerPBR) rows.get(i)).getValue()).append("\n");
+                    res.append(i).append("\t").append(((IntegerPBR) rows.get(i)).getValue()).append("\n");
         }
-        return res.toString();
+
+        return res.toString().replaceAll("null", "");
     }
 }
