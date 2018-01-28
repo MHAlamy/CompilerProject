@@ -331,6 +331,9 @@ public class Scaner {
     }
 
     private boolean isStringNumber(String read) {
+        if (read.equals("+") || read.equals("-"))
+            return false;
+
         char[] arr = read.toCharArray();
 
         if (arr.length == 0 || (arr[0] != '-' && arr[0] != '+' && !Character.isDigit(arr[0])))
