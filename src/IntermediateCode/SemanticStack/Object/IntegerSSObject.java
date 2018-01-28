@@ -1,8 +1,6 @@
 package IntermediateCode.SemanticStack.Object;
 
-/**
- * Created by mha on 1/27/18.
- */
+
 public class IntegerSSObject extends SSObject {
 
     private int value;

@@ -125,7 +125,7 @@ public class IntermediateCodeGenerator {
         } else
             throw new Exception("Expected to have row index");
         semanticStack.push(new AddressSSObject(address));
-        System.out.println("size after push = " + semanticStack.size());
+//        System.out.println("size after push = " + semanticStack.size());
     }
 
     public void pushInteger(Token nextToken) throws Exception {
@@ -135,11 +135,25 @@ public class IntermediateCodeGenerator {
             value = ((ValueIndex)tempIndex).getValue();
         } else
             throw new Exception("Expected to see value index");
+
         semanticStack.push(new IntegerSSObject(value));
     }
 
+    public void pushBoolean(Token nextToken) throws Exception {
+        int val;
+        if (nextToken.getName().equals("true")) {
+            val = 1;
+        } else if (nextToken.getName().equals("false")) {
+            val = 0;
+        } else {
+            throw new Exception("Not a Boolean value");
+        }
+
+        semanticStack.push(new BooleanSSObject(val));
+    }
+
     public void add() throws Exception {
-        System.out.println("addADDING " + semanticStack.size());
+//        System.out.println("addADDING " + semanticStack.size());
         Instruction instruction = new Instruction(InstructionType.ADD);
 
         if (semanticStack.peek() instanceof IntegerSSObject) {
@@ -171,11 +185,18 @@ public class IntermediateCodeGenerator {
     public void assign() throws Exception {
         Instruction instruction = new Instruction(InstructionType.ASSIGN);
 
-        System.out.println("assigning: " + semanticStack.size());
+//        System.out.println("assigning: " + semanticStack.size());
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
             instruction.setIp(0, new InstructionParameter(ParameterType.INTEGER, value));
 
+        } else if (semanticStack.peek() instanceof BooleanSSObject) {
+            int value = ((BooleanSSObject)semanticStack.pop()).getValue();
+            if (value == 0)
+                instruction.setIp(0, new InstructionParameter(ParameterType.BOOLEAN, 0));
+            else
+                instruction.setIp(0, new InstructionParameter(ParameterType.BOOLEAN, 1));
+            // TODO: 1/28/18 check what is going on
         } else if (semanticStack.peek() instanceof AddressSSObject) {
             int value = ((AddressSSObject)semanticStack.pop()).getValue();
             instruction.setIp(0, new InstructionParameter(ParameterType.ADDRESS, value));
@@ -312,15 +333,14 @@ public class IntermediateCodeGenerator {
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
             return new InstructionParameter(ParameterType.INTEGER, value);
-        }
-        if (semanticStack.peek() instanceof AddressSSObject) {
+        } else if (semanticStack.peek() instanceof AddressSSObject) {
             int value = ((AddressSSObject)semanticStack.pop()).getValue();
             return new InstructionParameter(ParameterType.ADDRESS, value);
-        }
-        if (semanticStack.peek() instanceof BooleanSSObject) {
+        } else if (semanticStack.peek() instanceof BooleanSSObject) {
             int value = ((BooleanSSObject)semanticStack.pop()).getValue();
             return new InstructionParameter(ParameterType.BOOLEAN, value);
         }
+
         return null;
     }
 

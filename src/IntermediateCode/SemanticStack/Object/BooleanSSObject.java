@@ -1,8 +1,5 @@
 package IntermediateCode.SemanticStack.Object;
 
-/**
- * Created by mha on 1/27/18.
- */
 public class BooleanSSObject extends SSObject {
 
     private int value;

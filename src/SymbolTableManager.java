@@ -224,7 +224,7 @@ public class SymbolTableManager {
 
                     default:
                         res = foundRow;
-                        System.out.println("ACCESSED " + name + ", inside " + foundRow.getContainer().getName() + "\n");
+//                        System.out.println("ACCESSED " + name + ", inside " + foundRow.getContainer().getName() + "\n");
                         break;
 
                 }
