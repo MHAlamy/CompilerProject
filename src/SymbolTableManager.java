@@ -112,7 +112,7 @@ public class SymbolTableManager {
                 ((VarRow)tmpRow).setAddress(address);
 
                 //Adding parameter address to method row
-                lastDefinedMethodRow.addParamterAddress(address);
+                lastDefinedMethodRow.addParameterAddress(address);
 
                 //Finding type
                 if (semanticStack.peek() instanceof StringSSObject) {

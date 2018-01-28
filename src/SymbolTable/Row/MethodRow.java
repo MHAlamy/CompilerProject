@@ -26,7 +26,7 @@ public class MethodRow extends NonClassRow {
         this.methodSymbolTable = methodSymbolTable;
     }
 
-    public void addParamterAddress(int address) {
+    public void addParameterAddress(int address) {
         parameterAdresses.add(address);
     }
 
