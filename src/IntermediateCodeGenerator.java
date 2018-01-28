@@ -298,6 +298,7 @@ public class IntermediateCodeGenerator {
         instruction.setIp(0, getIPFromSS());
         instruction.setIp(1, getIPFromSS());
         int address = programBlock.allocateInteger();
+        semanticStack.push(new AddressSSObject(address));
         instruction.setIp(2, new AddressIP(address));
         programBlock.addInstruction(instruction);
     }
@@ -307,6 +308,7 @@ public class IntermediateCodeGenerator {
         instruction.setIp(1, getIPFromSS());
         instruction.setIp(0, getIPFromSS());
         int address = programBlock.allocateInteger();
+        semanticStack.push(new AddressSSObject(address));
         instruction.setIp(2, new AddressIP(address));
         programBlock.addInstruction(instruction);
     }
@@ -316,6 +318,7 @@ public class IntermediateCodeGenerator {
         instruction.setIp(1, getIPFromSS());
         instruction.setIp(0, getIPFromSS());
         int address = programBlock.allocateInteger();
+        semanticStack.push(new AddressSSObject(address));
         instruction.setIp(2, new AddressIP(address));
         programBlock.addInstruction(instruction);
     }
@@ -325,6 +328,7 @@ public class IntermediateCodeGenerator {
         instruction.setIp(0, getIPFromSS());
         instruction.setIp(1, getIPFromSS());
         int address = programBlock.allocateInteger();
+        semanticStack.push(new AddressSSObject(address));
         instruction.setIp(2, new AddressIP(address));
         programBlock.addInstruction(instruction);
     }
@@ -334,6 +338,7 @@ public class IntermediateCodeGenerator {
         instruction.setIp(0, getIPFromSS());
         instruction.setIp(1, getIPFromSS());
         int address = programBlock.allocateInteger();
+        semanticStack.push(new AddressSSObject(address));
         instruction.setIp(2, new AddressIP(address));
         programBlock.addInstruction(instruction);
     }
