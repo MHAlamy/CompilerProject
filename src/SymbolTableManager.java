@@ -16,6 +16,8 @@ public class SymbolTableManager {
     private ClassRow lastClassDefinedRow;
     private MethodRow lastDefinedMethodRow;
 
+    private SymbolTable backupSymbolTable;
+
     public SymbolTableManager(SemanticStack semanticStack, ProgramBlock programBlock) {
         masterSymbolTable = new MasterSymbolTable("SymbolTableManager");
         scopeState = ScopeState.DEFAULT;
@@ -308,6 +310,14 @@ public class SymbolTableManager {
 
     public void setCurrentSymbolTable(SymbolTable currentSymbolTable) {
         this.currentSymbolTable = currentSymbolTable;
+    }
+
+    public SymbolTable getBackupSymbolTable() {
+        return backupSymbolTable;
+    }
+
+    public void setBackupSymbolTable(SymbolTable backupSymbolTable) {
+        this.backupSymbolTable = backupSymbolTable;
     }
 }
 

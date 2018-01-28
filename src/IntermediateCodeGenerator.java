@@ -343,6 +343,29 @@ public class IntermediateCodeGenerator {
         programBlock.addInstruction(instruction);
     }
 
+    public void pushId1(Token nextToken) throws Exception {
+        Index tempIndex = nextToken.getIndex();
+        Row tempRow = ((RowIndex)tempIndex).getRow();
+        if (tempRow instanceof VarRow) {
+            pushSimpleId(nextToken);
+        } else {
+            ClassRow classRow = (ClassRow) tempRow;
+            symbolTableManager.setBackupSymbolTable(symbolTableManager.getCurrentSymbolTable());
+            symbolTableManager.setCurrentSymbolTable(classRow.getClassSymbolTable());
+        }
+    }
+
+    public void pushId2(Token nextToken) throws Exception {
+        Index tempIndex = nextToken.getIndex();
+        Row tempRow = ((RowIndex)tempIndex).getRow();
+        if (tempRow instanceof VarRow) {
+            pushSimpleId(nextToken);
+            symbolTableManager.setCurrentSymbolTable(symbolTableManager.getBackupSymbolTable());
+        } else {
+
+        }
+    }
+
     private InstructionParameter getIPFromSS() {
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
