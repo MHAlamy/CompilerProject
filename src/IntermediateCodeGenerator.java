@@ -233,6 +233,8 @@ public class IntermediateCodeGenerator {
         Instruction jp = new Instruction(InstructionType.JP);
         int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
         jp.setIp(0, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()));
+
+        programBlock.setInstructionAtRow(pbRow, jp);
     }
 
     public void forSaveHere() {
@@ -262,6 +264,48 @@ public class IntermediateCodeGenerator {
         jp.setIp(0, new AddressIP(destination));
 
         programBlock.addInstruction(jp);
+    }
+
+    public void print() {
+        Instruction instruction = new Instruction(InstructionType.PRINT);
+        instruction.setIp(0, getIPFromSS());
+        programBlock.addInstruction(instruction);
+    }
+
+    public void isEqual() {
+        Instruction instruction = new Instruction(InstructionType.EQ);
+        instruction.setIp(0, getIPFromSS());
+        instruction.setIp(1, getIPFromSS());
+        int address = programBlock.allocateInteger();
+        instruction.setIp(2, new AddressIP(address));
+        programBlock.addInstruction(instruction);
+    }
+
+    public void isLess() {
+        Instruction instruction = new Instruction(InstructionType.LT);
+        instruction.setIp(1, getIPFromSS());
+        instruction.setIp(0, getIPFromSS());
+        int address = programBlock.allocateInteger();
+        instruction.setIp(2, new AddressIP(address));
+        programBlock.addInstruction(instruction);
+    }
+
+    public void sub() {
+        Instruction instruction = new Instruction(InstructionType.SUB);
+        instruction.setIp(1, getIPFromSS());
+        instruction.setIp(0, getIPFromSS());
+        int address = programBlock.allocateInteger();
+        instruction.setIp(2, new AddressIP(address));
+        programBlock.addInstruction(instruction);
+    }
+
+    public void mult() {
+        Instruction instruction = new Instruction(InstructionType.MULT);
+        instruction.setIp(0, getIPFromSS());
+        instruction.setIp(1, getIPFromSS());
+        int address = programBlock.allocateInteger();
+        instruction.setIp(2, new AddressIP(address));
+        programBlock.addInstruction(instruction);
     }
 
     private InstructionParameter getIPFromSS() {
