@@ -36,10 +36,15 @@ public class ProgramBlock {
         rows.set(rowNumber, new InstructionPBR(instruction));
     }
 
+    public void addInstruction(Instruction instruction) {
+        rows.set(currentRow, new InstructionPBR(instruction));
+        currentRow++;
+    }
+
     public int allocateInteger() {
         rows.set(currentAllocRow, new IntegerPBR(0));
-        currentAllocRow++;
-        return currentAllocRow - 1;
+        currentAllocRow += 4;
+        return currentAllocRow - 4;
     }
 
     public int getCurrentRow() {

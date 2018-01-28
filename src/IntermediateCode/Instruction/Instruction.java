@@ -7,6 +7,10 @@ public class Instruction {
     private InstructionType type;
     private InstructionParameter parameters[];
 
+    public Instruction(InstructionType type) {
+        this.type = type;
+    }
+
     public Instruction(InstructionType type,
                        InstructionParameter ip1,
                        InstructionParameter ip2,
@@ -20,6 +24,10 @@ public class Instruction {
 
     public InstructionType getType() {
         return type;
+    }
+
+    public void setIp(int index, InstructionParameter ip) {
+        parameters[index] = ip;
     }
 
     @Override

@@ -8,10 +8,10 @@ public class SymbolTableManager {
 
     private MasterSymbolTable masterSymbolTable;
     private ScopeState scopeState;
-    private SymbolTable currentSymbolTable;
     private ProgramBlock programBlock;
     private SemanticStack semanticStack;
 
+    private SymbolTable currentSymbolTable;
     private Row scopeEntryRow;
     private ClassRow lastClassDefinedRow;
     private MethodRow lastDefinedMethodRow;
@@ -304,6 +304,14 @@ public class SymbolTableManager {
 
     public ClassRow getLastClassDefinedRow() {
         return lastClassDefinedRow;
+    }
+
+    public SymbolTable getCurrentSymbolTable() {
+        return currentSymbolTable;
+    }
+
+    public void setCurrentSymbolTable(SymbolTable currentSymbolTable) {
+        this.currentSymbolTable = currentSymbolTable;
     }
 }
 
