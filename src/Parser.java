@@ -77,9 +77,9 @@ public class Parser {
 //                scaner.setSTState("useID");
 
 
-            System.out.println("Parse Stack = " + parseStack);
-            System.out.println("Next Token = " + nextToken);
-            System.out.println("=====================================================================================");
+//            System.out.println("Parse Stack = " + parseStack);
+//            System.out.println("Next Token = " + nextToken);
+//            System.out.println("=====================================================================================");
 
 //            try {
 //                Thread.sleep(200);

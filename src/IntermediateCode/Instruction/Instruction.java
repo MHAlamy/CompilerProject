@@ -9,6 +9,7 @@ public class Instruction {
 
     public Instruction(InstructionType type) {
         this.type = type;
+        parameters = new InstructionParameter[3];
     }
 
     public Instruction(InstructionType type,

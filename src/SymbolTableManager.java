@@ -184,12 +184,6 @@ public class SymbolTableManager {
             Row foundRow = null;
 
             while (currentSymbolTable != null) {
-//                try {
-//                    Thread.sleep(100);
-//                } catch (Exception e) {
-//                    System.out.println("efjis"
-//                    );
-//                }
                 foundRow = findRowInCurrentSymbolTable(name);
 
                 if (foundRow != null) { // was found
@@ -257,7 +251,7 @@ public class SymbolTableManager {
         scopeState = ScopeState.DEFAULT;
 
 //        System.out.println("FOUND ROW " + res.getName());
-        System.out.println(masterSymbolTable + "\n\n");
+//        System.out.println(masterSymbolTable + "\n\n");
         return res;
     }
 
