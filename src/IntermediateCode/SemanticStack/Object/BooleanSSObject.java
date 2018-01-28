@@ -4,8 +4,8 @@ public class BooleanSSObject extends SSObject {
 
     private int value;
 
-    public BooleanSSObject(SSType type, int value) {
-        super(type);
+    public BooleanSSObject(int value) {
+        super(SSType.BOOLEAN);
         this.value = value;
     }
 

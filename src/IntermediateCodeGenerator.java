@@ -1,4 +1,5 @@
 import IntermediateCode.Instruction.Instruction;
+import IntermediateCode.Instruction.InstructionParameter.AddressIP;
 import IntermediateCode.Instruction.InstructionParameter.InstructionParameter;
 import IntermediateCode.Instruction.InstructionParameter.IntegerIP;
 import IntermediateCode.Instruction.InstructionParameter.ParameterType;
@@ -253,6 +254,35 @@ public class IntermediateCodeGenerator {
         Instruction jp = new Instruction(InstructionType.JP);
         int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
         jp.setIp(0, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()));
+    }
+
+    public void forSaveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+    }
+
+    public void forReserveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+        programBlock.incrementCurrentRow();
+    }
+
+    public void forStep() throws Exception {
+        add();
+        assign();
+    }
+
+    public void forFill() {
+        Instruction jpf = new Instruction(InstructionType.JPF);
+        int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
+        jpf.setIp(0, getIPFromSS());
+        jpf.setIp(1, new AddressIP(programBlock.getCurrentRow() + 1));
+
+        programBlock.setInstructionAtRow(pbRow, jpf);
+
+        Instruction jp = new Instruction(InstructionType.JP);
+        int destination = ((AddressSSObject)semanticStack.pop()).getValue();
+        jp.setIp(0, new AddressIP(destination));
+
+        programBlock.addInstruction(jp);
     }
 
     private InstructionParameter getIPFromSS() {
