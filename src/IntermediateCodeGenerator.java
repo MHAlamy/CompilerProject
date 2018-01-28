@@ -235,6 +235,10 @@ public class IntermediateCodeGenerator {
         jp.setIp(0, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()));
     }
 
+    public void forSaveHere() {
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+    }
+
     public void forReserveHere() {
         semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
         programBlock.incrementCurrentRow();
