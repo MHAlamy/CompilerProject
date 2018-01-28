@@ -31,7 +31,7 @@ public class Parser {
 
     private ActionSymbol setClassFlag, createScopeEntry, unsetClassFlag, getInScope, getOutOfScope,
         setFieldFlag, unsetFieldFlag, setVarFlag, unsetValFlag, setMethodFlag, unsetMethodFlag, saveMainAddress,
-        setParentClass;
+        setParentClass, saveType, setParFlag, unsetParFlag;
 
     public Parser() {
         rules = new ArrayList<Rule>();
@@ -216,7 +216,6 @@ public class Parser {
                         }
                         break;
                     case "saveMainAddress":
-                        // TODO: 1/28/18
                         icg.saveMainAddress();
                         break;
 
@@ -405,8 +404,13 @@ public class Parser {
         unsetValFlag = new ActionSymbol("unsetValFlag");
         setMethodFlag = new ActionSymbol("setMethodFlag");
         unsetMethodFlag = new ActionSymbol("unsetMethodFlag");
+
         saveMainAddress = new ActionSymbol("saveMainAddress");
         setParentClass = new ActionSymbol("setParentClass");
+
+        saveType = new ActionSymbol("saveType");
+        setParFlag = new ActionSymbol("setParFlag");
+        unsetParFlag = new ActionSymbol("unsetParFlag");
     }
 
     private void addRules() {
@@ -434,26 +438,31 @@ public class Parser {
         rules.add(new Rule(ntFieldDecs, new ArrayList<Term>(Arrays.asList(ntFieldDec, ntFieldDecs)))); // 8
         rules.add(new Rule(ntFieldDecs, new ArrayList<Term>())); // 9
 
-        rules.add(new Rule(ntFieldDec, new ArrayList<Term>(Arrays.asList(setFieldFlag, tStatic, ntType, tId,
+        rules.add(new Rule(ntFieldDec, new ArrayList<Term>(Arrays.asList(setFieldFlag, tStatic, saveType, //???
+                ntType, tId,
                 unsetFieldFlag, tSemiColon)))); // 10
 
         rules.add(new Rule(ntVarDecs, new ArrayList<Term>(Arrays.asList(ntVarDec, ntVarDecs)))); // 11
         rules.add(new Rule(ntVarDecs, new ArrayList<Term>())); // 12
 
-        rules.add(new Rule(ntVarDec, new ArrayList<Term>(Arrays.asList(setVarFlag, ntType, tId,
+        rules.add(new Rule(ntVarDec, new ArrayList<Term>(Arrays.asList(setVarFlag, saveType, // ???
+                ntType, tId,
                 unsetValFlag, tSemiColon)))); // 13
 
         rules.add(new Rule(ntMethodDecs, new ArrayList<Term>(Arrays.asList(ntMethodDec, ntMethodDecs)))); // 14
         rules.add(new Rule(ntMethodDecs, new ArrayList<Term>())); // 15
 
-        rules.add(new Rule(ntMethodDec, new ArrayList<Term>(Arrays.asList(setMethodFlag, tPublic, tStatic, ntType,
+        rules.add(new Rule(ntMethodDec, new ArrayList<Term>(Arrays.asList(setMethodFlag, tPublic, tStatic, saveType, //???
+                ntType,
                 createScopeEntry, tId, getInScope, unsetMethodFlag, tParanOpen, ntPrmts, tParanClose, tCurlyBraceOpen,
                 ntVarDecs, ntStmts, tReturn, ntGenExp, tSemiColon, getOutOfScope, tCurlyBraceClose)))); // 16
 
-        rules.add(new Rule(ntPrmts, new ArrayList<Term>(Arrays.asList(ntType, tId, ntPrmt)))); // 17
+        rules.add(new Rule(ntPrmts, new ArrayList<Term>(Arrays.asList(setParFlag, saveType, ntType, tId,
+                unsetParFlag, ntPrmt)))); // 17 ????
         rules.add(new Rule(ntPrmts, new ArrayList<Term>())); // 18
 
-        rules.add(new Rule(ntPrmt, new ArrayList<Term>(Arrays.asList(tComma, ntType, tId, ntPrmt)))); // 19
+        rules.add(new Rule(ntPrmt, new ArrayList<Term>(Arrays.asList(tComma, setParFlag, saveType,
+                ntType, tId, unsetParFlag, ntPrmt)))); // 19 ???
         rules.add(new Rule(ntPrmt, new ArrayList<Term>())); // 20
 
         rules.add(new Rule(ntType, new ArrayList<Term>(Arrays.asList(tBoolean)))); // 21
