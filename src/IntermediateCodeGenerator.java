@@ -149,7 +149,7 @@ public class IntermediateCodeGenerator {
             throw new Exception("Not a Boolean value");
         }
 
-        semanticStack.push(new BooleanSSObject(SSType.BOOLEAN, val));
+        semanticStack.push(new BooleanSSObject(val));
     }
 
     public void add() throws Exception {
