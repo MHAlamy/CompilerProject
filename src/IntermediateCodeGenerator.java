@@ -329,6 +329,15 @@ public class IntermediateCodeGenerator {
         programBlock.addInstruction(instruction);
     }
 
+    public void and() {
+        Instruction instruction = new Instruction(InstructionType.AND);
+        instruction.setIp(0, getIPFromSS());
+        instruction.setIp(1, getIPFromSS());
+        int address = programBlock.allocateInteger();
+        instruction.setIp(2, new AddressIP(address));
+        programBlock.addInstruction(instruction);
+    }
+
     private InstructionParameter getIPFromSS() {
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
