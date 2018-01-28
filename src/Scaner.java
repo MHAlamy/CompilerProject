@@ -310,7 +310,7 @@ public class Scaner {
     }
 
     private Token createIdToken(String curRead) {
-        System.out.println("Adding ID " + curRead + ". state is : " + symbolTableManager.getScopeState() + "\n");
+//        System.out.println("Adding ID " + curRead + ". state is : " + symbolTableManager.getScopeState() + "\n");
 
 
         return new Token("id", new RowIndex(symbolTableManager.getRowIndex(curRead)));

@@ -203,6 +203,7 @@ public class IntermediateCodeGenerator {
         } else
             throw new Exception("Expected to see address or integer");
 
+
         if (semanticStack.peek() instanceof AddressSSObject) {
             int value = ((AddressSSObject)semanticStack.pop()).getValue();
             instruction.setIp(1, new InstructionParameter(ParameterType.ADDRESS, value));
@@ -365,6 +366,7 @@ public class IntermediateCodeGenerator {
         } else {
             MethodRow methodRow = ((MethodRow) tempRow);
              Instruction assign = new Instruction(InstructionType.ASSIGN);
+//            System.out.println("CURRO " + programBlock.getCurrentRow());
              assign.setIp(0, new IntegerIP(programBlock.getCurrentRow() + 2));
              assign.setIp(1, new AddressIP(methodRow.getReturnJumpAddress()));
 

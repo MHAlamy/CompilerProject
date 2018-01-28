@@ -33,7 +33,7 @@ public class Parser {
         setFieldFlag, unsetFieldFlag, setVarFlag, unsetValFlag, setMethodFlag, unsetMethodFlag, saveMainAddress,
         setParentClass, saveType, setParFlag, unsetParFlag, pushSimpleId, assign, add, pushInteger, whileSaveHere,
         whileReserveHere, whileFill, ifReserveHere, ifFillJpf, ifFillJp, pushBoolean, forSaveHere, forReserveHere,
-        forStep, forFill, print, and, isEqual, isLess, sub, mult;
+        forStep, forFill, print, and, isEqual, isLess, sub, mult, pushId1, pushId2, returnFromMethod;
 
     public Parser() {
         rules = new ArrayList<Rule>();
@@ -79,9 +79,9 @@ public class Parser {
 //                scaner.setSTState("useID");
 
 
-            System.out.println("Parse Stack = " + parseStack);
-            System.out.println("Next Token = " + nextToken);
-            System.out.println("=====================================================================================");
+//            System.out.println("Parse Stack = " + parseStack);
+//            System.out.println("Next Token = " + nextToken);
+//            System.out.println("=====================================================================================");
 
 //            try {
 //                Thread.sleep(200);
@@ -316,6 +316,14 @@ public class Parser {
                         }
                         break;
 
+                    case "ifFillJp":
+                        try {
+                            icg.ifFillJp();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
                     case "forSaveHere":
                         try {
                             icg.forSaveHere();
@@ -356,13 +364,13 @@ public class Parser {
                         }
                         break;
 
-//                    case "and":
-//                        try {
-//                            icg.();
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                        break;
+                    case "and":
+                        try {
+                            icg.and();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
                     case "isEqual":
                         try {
                             icg.isEqual();
@@ -390,6 +398,30 @@ public class Parser {
                     case "mult":
                         try {
                             icg.mult();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "pushId1":
+                        try {
+                            icg.pushId1(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "pushId2":
+                        try {
+                            icg.pushId2(nextToken);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+
+                    case "returnFromMethod":
+                        try {
+                            icg.returnFromMethod();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -600,6 +632,11 @@ public class Parser {
         isLess = new ActionSymbol("isLess");
         sub = new ActionSymbol("sub");
         mult = new ActionSymbol("mult");
+
+        pushId1 = new ActionSymbol("pushId1");
+        pushId2 = new ActionSymbol("pushId2");
+
+        returnFromMethod = new ActionSymbol("returnFromMethod");
     }
 
     private void addRules() {
@@ -643,7 +680,7 @@ public class Parser {
 
         rules.add(new Rule(ntMethodDec, new ArrayList<Term>(Arrays.asList(setMethodFlag, tPublic, tStatic, saveType,
                 ntType, createScopeEntry, tId, getInScope, unsetMethodFlag, tParanOpen, ntPrmts, tParanClose,
-                tCurlyBraceOpen, ntVarDecs, ntStmts, tReturn, ntGenExp, tSemiColon,
+                tCurlyBraceOpen, ntVarDecs, ntStmts, tReturn, ntGenExp, returnFromMethod, tSemiColon,
                 getOutOfScope, tCurlyBraceClose)))); // 16
 
         rules.add(new Rule(ntPrmts, new ArrayList<Term>(Arrays.asList(setParFlag, saveType, ntType, tId,
@@ -699,12 +736,12 @@ public class Parser {
         rules.add(new Rule(ntTerm1, new ArrayList<Term>())); // 45
 
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(tParanOpen, ntExp, tParanClose)))); // 46
-        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushSimpleId, tId, ntFactor1)))); // 47 ???
+        rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushId1, tId, ntFactor1)))); // 47 ???
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushBoolean, tTrue)))); // 48
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushBoolean, tFalse)))); // 49
         rules.add(new Rule(ntFactor, new ArrayList<Term>(Arrays.asList(pushInteger, tInteger)))); // 50 ???
 
-        rules.add(new Rule(ntFactor1, new ArrayList<Term>(Arrays.asList(tDot, tId, ntFactor2)))); // 51
+        rules.add(new Rule(ntFactor1, new ArrayList<Term>(Arrays.asList(tDot, pushId2, tId, ntFactor2)))); // 51
         rules.add(new Rule(ntFactor1, new ArrayList<Term>())); // 52
 
         rules.add(new Rule(ntFactor2, new ArrayList<Term>(Arrays.asList(tParanOpen, ntArgs, tParanClose)))); // 53

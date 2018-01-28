@@ -66,6 +66,11 @@ public class ProgramBlock {
                     res.append(i).append("\t").append(((IntegerPBR) rows.get(i)).getValue()).append("\n");
         }
 
-        return res.toString().replaceAll("null", "");
+        String r = res.toString();
+        r = r.replace("null", "");
+        r = r.replace("TRUE", "true");
+        r = r.replace("FALSE", "false");
+//        return res.toString().replaceAll("null", "");
+        return r;
     }
 }
