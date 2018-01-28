@@ -217,6 +217,23 @@ public class IntermediateCodeGenerator {
         programBlock.incrementCurrentRow();
     }
 
+    public void ifFillJpf() {
+        Instruction jpf = new Instruction(InstructionType.JPF);
+        int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
+        jpf.setIp(0, getIPFromSS());
+        jpf.setIp(1, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()+1));
+        programBlock.setInstructionAtRow(pbRow, jpf);
+
+        semanticStack.push(new AddressSSObject(programBlock.getCurrentRow()));
+        programBlock.incrementCurrentRow();
+    }
+
+    public void ifFillJp() {
+        Instruction jp = new Instruction(InstructionType.JP);
+        int pbRow = ((AddressSSObject)semanticStack.pop()).getValue();
+        jp.setIp(0, new InstructionParameter(ParameterType.ADDRESS, programBlock.getCurrentRow()));
+    }
+
     private InstructionParameter getIPFromSS() {
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
@@ -230,6 +247,7 @@ public class IntermediateCodeGenerator {
             int value = ((BooleanSSObject)semanticStack.pop()).getValue();
             return new InstructionParameter(ParameterType.BOOLEAN, value);
         }
+        return null;
     }
 
 //    public void pushRow1(Token nextToken) throws Exception {
