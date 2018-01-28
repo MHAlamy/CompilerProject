@@ -1,16 +1,15 @@
 import IntermediateCode.Instruction.Instruction;
-import IntermediateCode.Instruction.InstructionParameter.AddressIP;
-import IntermediateCode.Instruction.InstructionParameter.InstructionParameter;
-import IntermediateCode.Instruction.InstructionParameter.IntegerIP;
-import IntermediateCode.Instruction.InstructionParameter.ParameterType;
+import IntermediateCode.Instruction.InstructionParameter.*;
 import IntermediateCode.Instruction.InstructionType;
 import IntermediateCode.ProgramBlock.ProgramBlock;
 import IntermediateCode.SemanticStack.Object.*;
 import IntermediateCode.SemanticStack.SemanticStack;
+import SymbolTable.Row.MethodRow;
 import SymbolTable.Row.Row;
 import SymbolTable.Row.ClassRow;
 import SymbolTable.Row.VarRow;
 import SymbolTable.SymbolTable;
+import SymbolTable.MethodSymbolTable;
 
 public class IntermediateCodeGenerator {
 
@@ -358,12 +357,34 @@ public class IntermediateCodeGenerator {
     public void pushId2(Token nextToken) throws Exception {
         Index tempIndex = nextToken.getIndex();
         Row tempRow = ((RowIndex)tempIndex).getRow();
+
+        symbolTableManager.setCurrentSymbolTable(symbolTableManager.getBackupSymbolTable());
+
         if (tempRow instanceof VarRow) {
             pushSimpleId(nextToken);
-            symbolTableManager.setCurrentSymbolTable(symbolTableManager.getBackupSymbolTable());
         } else {
+            MethodRow methodRow = ((MethodRow) tempRow);
+             Instruction assign = new Instruction(InstructionType.ASSIGN);
+             assign.setIp(0, new IntegerIP(programBlock.getCurrentRow() + 2));
+             assign.setIp(1, new AddressIP(methodRow.getReturnJumpAddress()));
+
+             programBlock.addInstruction(assign);
+
+             Instruction jump = new Instruction(InstructionType.JP);
+             assign.setIp(0, new AddressIP(methodRow.getAddress()));
+
+             programBlock.addInstruction(jump);
 
         }
+    }
+
+    public void returnFromMethod() {
+        MethodSymbolTable mst = ((MethodSymbolTable)symbolTableManager.getCurrentSymbolTable());
+        int returnAddress = mst.getParentRow().getReturnJumpAddress();
+
+        Instruction jp = new Instruction(InstructionType.JP);
+        jp.setIp(0, new IndirectIP(returnAddress));
+        programBlock.addInstruction(jp);
     }
 
     private InstructionParameter getIPFromSS() {

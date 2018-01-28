@@ -134,9 +134,14 @@ public class SymbolTableManager {
                 address = programBlock.getCurrentRow();
                 ((MethodRow)tmpRow).setAddress(address);
                 MethodSymbolTable tmp = new MethodSymbolTable(name, (ClassSymbolTable)currentSymbolTable);
+                tmp.setParentRow((MethodRow) tmpRow);
                 ((MethodRow) tmpRow).setMethodSymbolTable(tmp);
 
                 lastDefinedMethodRow = (MethodRow) tmpRow;
+
+                ((MethodRow) tmpRow).setReturnJumpAddress(programBlock.allocateInteger());
+                ((MethodRow) tmpRow).setReturnValueAddress(programBlock.allocateInteger());
+
 
                 //Finding type
                 if (name.equals("main")) {

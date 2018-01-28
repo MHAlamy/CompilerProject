@@ -1,5 +1,6 @@
 package SymbolTable;
 
+import SymbolTable.Row.MethodRow;
 import SymbolTable.Row.Row;
 import SymbolTable.Row.VarRow;
 
@@ -13,10 +14,20 @@ public class MethodSymbolTable extends SymbolTable {
     private ClassSymbolTable containerClass;
     private ArrayList<VarRow> varRows;
 
+    private MethodRow parentRow;
+
     public MethodSymbolTable(String name, ClassSymbolTable containerClass) {
         super(name);
         this.containerClass = containerClass;
         varRows = new ArrayList<VarRow>();
+    }
+
+    public MethodRow getParentRow() {
+        return parentRow;
+    }
+
+    public void setParentRow(MethodRow parentRow) {
+        this.parentRow = parentRow;
     }
 
     public ClassSymbolTable getContainerClass() {

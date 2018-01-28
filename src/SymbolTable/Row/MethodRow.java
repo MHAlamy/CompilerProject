@@ -10,12 +10,14 @@ import java.util.ArrayList;
  */
 public class MethodRow extends NonClassRow {
     private MethodSymbolTable methodSymbolTable;
-    private ArrayList<Integer> parameterAdresses;
+    private ArrayList<Integer> parameterAddresses;
+    private int returnValueAddress;
+    private int returnJumpAddress;
 
     public MethodRow(SymbolTable container, String name) {//, SymbolTable.MethodSymbolTable methodSymbolTable) {
         super(container, name);
 //        this.methodSymbolTable = methodSymbolTable;
-        parameterAdresses = new ArrayList<>();
+        parameterAddresses = new ArrayList<>();
     }
 
     public MethodSymbolTable getMethodSymbolTable() {
@@ -27,7 +29,23 @@ public class MethodRow extends NonClassRow {
     }
 
     public void addParameterAddress(int address) {
-        parameterAdresses.add(address);
+        parameterAddresses.add(address);
+    }
+
+    public int getReturnValueAddress() {
+        return returnValueAddress;
+    }
+
+    public void setReturnValueAddress(int returnValueAddress) {
+        this.returnValueAddress = returnValueAddress;
+    }
+
+    public int getReturnJumpAddress() {
+        return returnJumpAddress;
+    }
+
+    public void setReturnJumpAddress(int returnJumpAddress) {
+        this.returnJumpAddress = returnJumpAddress;
     }
 
     @Override
