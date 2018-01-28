@@ -9,6 +9,7 @@ public class Instruction {
 
     public Instruction(InstructionType type) {
         this.type = type;
+        parameters = new InstructionParameter[3];
     }
 
     public Instruction(InstructionType type,
@@ -16,7 +17,7 @@ public class Instruction {
                        InstructionParameter ip2,
                        InstructionParameter ip3) {
         this.type = type;
-        parameters = new InstructionParameter[4]; // TODO: 1/28/18 siez?
+        parameters = new InstructionParameter[3];
         parameters[0] = ip1;
         parameters[1] = ip2;
         parameters[2] = ip3;

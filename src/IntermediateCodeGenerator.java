@@ -124,6 +124,7 @@ public class IntermediateCodeGenerator {
         } else
             throw new Exception("Expected to have row index");
         semanticStack.push(new AddressSSObject(address));
+        System.out.println("size after push = " + semanticStack.size());
     }
 
     public void pushInteger(Token nextToken) throws Exception {
@@ -137,6 +138,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void add() throws Exception {
+        System.out.println("addADDING " + semanticStack.size());
         Instruction instruction = new Instruction(InstructionType.ADD);
 
         if (semanticStack.peek() instanceof IntegerSSObject) {
@@ -168,12 +170,15 @@ public class IntermediateCodeGenerator {
     public void assign() throws Exception {
         Instruction instruction = new Instruction(InstructionType.ASSIGN);
 
+        System.out.println("assigning: " + semanticStack.size());
         if (semanticStack.peek() instanceof IntegerSSObject) {
             int value = ((IntegerSSObject)semanticStack.pop()).getValue();
             instruction.setIp(0, new InstructionParameter(ParameterType.INTEGER, value));
+
         } else if (semanticStack.peek() instanceof AddressSSObject) {
             int value = ((AddressSSObject)semanticStack.pop()).getValue();
             instruction.setIp(0, new InstructionParameter(ParameterType.ADDRESS, value));
+
         } else
             throw new Exception("Expected to see address or integer");
 
